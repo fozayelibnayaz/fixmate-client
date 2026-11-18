@@ -60,7 +60,7 @@ function ServicesContent() {
   }, [sp]);
 
   return (
-    <div className="container" style={{ paddingTop: 40, paddingBottom: 80 }}>
+    <div className="page-wrap">
       <div className="sec-index">BROWSE SERVICES</div>
       <h1 className="sec-title" style={{ marginBottom: 24 }}>Find a <em>repair.</em></h1>
       <div className="flex flex-wrap gap-3 mb-8 items-center">

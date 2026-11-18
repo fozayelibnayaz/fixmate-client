@@ -79,7 +79,7 @@ export default function ServiceDetailPage() {
   const minDate = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="container" style={{ paddingTop: 40, paddingBottom: 80 }}>
+    <div className="page-wrap">
       <div className="grid md:grid-cols-2 gap-10">
         <div>
           <div className="rounded-2xl overflow-hidden border border-[var(--line)] h-80 bg-[var(--panel2)]">
