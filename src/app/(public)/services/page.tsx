@@ -3,6 +3,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/utils";
+import { FALLBACK_SERVICES } from "@/lib/fallback";
 import { Search, SlidersHorizontal } from "lucide-react";
 
 const CATEGORIES = ["", "Smartphone", "Laptop & PC", "AC", "Refrigerator", "TV", "Washing Machine", "Electrical"];
@@ -44,8 +45,8 @@ function ServicesContent() {
     params.set("limit", "12");
     setLoading(true);
     api(`/api/services?${params.toString()}`)
-      .then((r) => { setData(r.data || []); setTotal(r.total || 0); setPages(r.pages || 1); })
-      .catch(() => { setData([]); })
+      .then((r) => { setData(r.data?.length ? r.data : FALLBACK_SERVICES); setTotal(r.total || FALLBACK_SERVICES.length); setPages(r.pages || 1); })
+      .catch(() => { setData(FALLBACK_SERVICES); setTotal(FALLBACK_SERVICES.length); setPages(1); })
       .finally(() => setLoading(false));
   }, [q, category, serviceMode, sort, page]);
 
