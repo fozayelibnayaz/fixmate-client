@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("home loads and shows hero", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveTitle(/FixMate/);
-  await expect(page.getByText("Every broken device")).toBeVisible();
+  await expect(page.getByText("Broken device?")).toBeVisible();
 });
 
 test("services page loads", async ({ page }) => {
