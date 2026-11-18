@@ -12,7 +12,7 @@ export default function AdminBookings() {
   useEffect(() => { load(); }, [filter]);
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">All Bookings</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>All Bookings</h1>
       <div className="flex gap-2 mb-4 flex-wrap">
         {["all", "requested", "accepted", "in-progress", "completed", "cancelled", "rejected"].map((s) => (
           <button key={s} onClick={() => setFilter(s)} className={`btn text-xs ${filter === s ? "btn-primary" : "btn-ghost"}`}>{s}</button>

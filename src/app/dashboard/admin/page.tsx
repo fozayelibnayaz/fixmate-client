@@ -7,7 +7,7 @@ export default function AdminOverview() {
   useEffect(() => { api("/api/admin/stats").then(setStats).catch(() => {}); }, []);
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>Admin Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <StatCard label="Total Users" value={stats.totalUsers ?? 0} />
         <StatCard label="Technicians" value={stats.totalTechnicians ?? 0} />
@@ -19,7 +19,7 @@ export default function AdminOverview() {
 }
 function StatCard({ label, value }: { label: string; value: any }) {
   return (
-    <div className="bg-[var(--panel)] border border-[var(--line)] rounded-xl p-5">
+    <div className="panel">
       <p className="text-xs font-mono text-[var(--muted)] uppercase">{label}</p>
       <p className="text-3xl font-bold mt-2 text-[var(--accent)]">{value}</p>
     </div>

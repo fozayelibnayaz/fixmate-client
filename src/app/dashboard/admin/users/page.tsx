@@ -18,7 +18,7 @@ export default function AdminUsers() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Manage Users</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>Manage Users</h1>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead><tr className="text-left text-[var(--muted)] font-mono text-xs uppercase"><th className="py-2">Photo</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead>

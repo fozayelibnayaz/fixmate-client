@@ -31,7 +31,7 @@ export default function TechOverview() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Technician Dashboard</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>Technician Dashboard</h1>
       <div className="flex items-center justify-between mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
           <StatCard label="Total Services" value={services.length} />
@@ -45,7 +45,7 @@ export default function TechOverview() {
 }
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-[var(--panel)] border border-[var(--line)] rounded-xl p-5">
+    <div className="panel">
       <p className="text-xs font-mono text-[var(--muted)] uppercase">{label}</p>
       <p className="text-3xl font-bold mt-2 text-[var(--accent)]">{value}</p>
     </div>

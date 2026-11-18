@@ -42,35 +42,35 @@ export default function ProfilePage() {
   const user = session?.user;
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Update Profile</h1>
-      <form onSubmit={save} className="bg-[var(--panel)] border border-[var(--line)] rounded-xl p-6 space-y-4 max-w-2xl">
+      <h1 className="page-heading" style={{marginBottom:28}}>Update Profile</h1>
+      <form onSubmit={save} className="panel space-y-4 max-w-2xl">
         <div className="flex items-center gap-4">
           <img src={image || `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name||"U")}&background=181c19&color=00e0c6`} className="w-20 h-20 rounded-xl" alt="" />
           <input type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); }} />
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Name</label>
-          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="field" />
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Email (read-only)</label>
-          <input value={user?.email || ""} readOnly className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+          <input value={user?.email || ""} readOnly className="field" />
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Role (read-only)</label>
-          <input value={user?.role || ""} readOnly className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+          <input value={user?.role || ""} readOnly className="field" />
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Phone</label>
-          <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+          <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="field" />
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Area</label>
-          <input value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+          <input value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} className="field" />
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Bio</label>
-          <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" rows={3} />
+          <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="field" rows={3} />
         </div>
         <button type="submit" disabled={saving} className="btn btn-primary"><span>{saving ? "Saving..." : "Save"}</span></button>
       </form>

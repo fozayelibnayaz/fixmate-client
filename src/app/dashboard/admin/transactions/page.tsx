@@ -10,8 +10,8 @@ export default function AdminTransactions() {
   }, []);
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Transactions</h1>
-      <div className="bg-[var(--panel)] border border-[var(--line)] rounded-xl p-5 mb-6">
+      <h1 className="page-heading" style={{marginBottom:28}}>Transactions</h1>
+      <div className="panel mb-6">
         <p className="text-xs font-mono text-[var(--muted)] uppercase">Total Revenue</p>
         <p className="text-3xl font-bold mt-2 text-[var(--accent)]">${total}</p>
       </div>

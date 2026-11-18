@@ -46,22 +46,22 @@ export default function AddService() {
   const user = session?.user;
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Add a Service</h1>
-      <form onSubmit={onSubmit} className="bg-[var(--panel)] border border-[var(--line)] rounded-xl p-6 space-y-4 max-w-2xl">
+      <h1 className="page-heading" style={{marginBottom:28}}>Add a Service</h1>
+      <form onSubmit={onSubmit} className="panel space-y-4 max-w-2xl">
         <div>
           <label className="text-xs text-[var(--muted)]">Title</label>
-          <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+          <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="field" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs text-[var(--muted)]">Category</label>
-            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm">
+            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="field">
               {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
           </div>
           <div>
             <label className="text-xs text-[var(--muted)]">Service Mode</label>
-            <select value={form.serviceMode} onChange={(e) => setForm({ ...form, serviceMode: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm">
+            <select value={form.serviceMode} onChange={(e) => setForm({ ...form, serviceMode: e.target.value })} className="field">
               <option>Home Visit</option>
               <option>Shop Drop-off</option>
             </select>
@@ -69,25 +69,25 @@ export default function AddService() {
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Description</label>
-          <textarea required value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" rows={4} />
+          <textarea required value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="field" rows={4} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs text-[var(--muted)]">Base Price (USD)</label>
-            <input type="number" min="1" required value={form.basePrice} onChange={(e) => setForm({ ...form, basePrice: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+            <input type="number" min="1" required value={form.basePrice} onChange={(e) => setForm({ ...form, basePrice: e.target.value })} className="field" />
           </div>
           <div>
             <label className="text-xs text-[var(--muted)]">Estimated Duration</label>
-            <input required value={form.estimatedDuration} onChange={(e) => setForm({ ...form, estimatedDuration: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" placeholder="2-3 hours" />
+            <input required value={form.estimatedDuration} onChange={(e) => setForm({ ...form, estimatedDuration: e.target.value })} className="field" placeholder="2-3 hours" />
           </div>
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Service Area</label>
-          <input required value={form.serviceArea} onChange={(e) => setForm({ ...form, serviceArea: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+          <input required value={form.serviceArea} onChange={(e) => setForm({ ...form, serviceArea: e.target.value })} className="field" />
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Technician Name (read-only)</label>
-          <input value={user?.name || ""} readOnly className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+          <input value={user?.name || ""} readOnly className="field" />
         </div>
         <div>
           <label className="text-xs text-[var(--muted)]">Service Image</label>

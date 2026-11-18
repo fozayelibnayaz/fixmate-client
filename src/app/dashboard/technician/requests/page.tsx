@@ -26,7 +26,7 @@ export default function TechRequests() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Manage Requests</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>Manage Requests</h1>
       <div className="flex gap-2 mb-4 flex-wrap">
         {["all", "requested", "accepted", "in-progress", "completed"].map((s) => (
           <button key={s} onClick={() => setStatusFilter(s)} className={`btn text-xs ${statusFilter === s ? "btn-primary" : "btn-ghost"}`}>{s}</button>
@@ -37,7 +37,7 @@ export default function TechRequests() {
       ) : (
         <div className="space-y-4">
           {bookings.map((b) => (
-            <div key={b._id} className="bg-[var(--panel)] border border-[var(--line)] rounded-xl p-5">
+            <div key={b._id} className="panel">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -88,7 +88,7 @@ export default function TechRequests() {
 function Modal({ title, onClose, children }: any) {
   return (
     <div className="fixed inset-0 bg-black/60 z-50 grid place-items-center p-4" onClick={onClose}>
-      <div className="bg-[var(--panel)] border border-[var(--line)] rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+      <div className="panel w-full max-w-md" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-bold mb-3">{title}</h3>
         {children}
       </div>

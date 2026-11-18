@@ -22,7 +22,7 @@ export default function AdminServices() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Service Approval</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>Service Approval</h1>
       <div className="flex gap-2 mb-4">
         {["pending", "approved", "rejected", "all"].map((s) => (
           <button key={s} onClick={() => setFilter(s)} className={`btn text-xs ${filter === s ? "btn-primary" : "btn-ghost"}`}>{s}</button>

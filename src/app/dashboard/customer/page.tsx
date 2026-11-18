@@ -12,7 +12,7 @@ export default function CustomerOverview() {
   const completed = bookings.filter((b) => b.status === "completed").length;
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Customer Dashboard</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>Customer Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <StatCard label="Total Requests" value={total} />
         <StatCard label="Active Jobs" value={active} />
@@ -25,7 +25,7 @@ export default function CustomerOverview() {
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-[var(--panel)] border border-[var(--line)] rounded-xl p-5">
+    <div className="panel">
       <p className="text-xs font-mono text-[var(--muted)] uppercase">{label}</p>
       <p className="text-3xl font-bold mt-2 text-[var(--accent)]">{value}</p>
     </div>

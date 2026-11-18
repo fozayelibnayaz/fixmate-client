@@ -41,7 +41,7 @@ export default function MyServices() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">My Services</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>My Services</h1>
       {services.length === 0 ? (
         <div className="text-center py-20"><div className="text-5xl mb-4">🛠️</div><p className="text-[var(--muted)]">No services yet.</p></div>
       ) : (
@@ -73,11 +73,11 @@ export default function MyServices() {
       {editId && (
         <Modal title="Edit service" onClose={() => setEditId(null)}>
           <div className="space-y-3">
-            <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" placeholder="Title" />
-            <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" placeholder="Description" />
-            <input type="number" value={editForm.basePrice} onChange={(e) => setEditForm({ ...editForm, basePrice: Number(e.target.value) })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" placeholder="Price" />
-            <input value={editForm.estimatedDuration} onChange={(e) => setEditForm({ ...editForm, estimatedDuration: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" placeholder="Duration" />
-            <input value={editForm.serviceArea} onChange={(e) => setEditForm({ ...editForm, serviceArea: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" placeholder="Area" />
+            <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="field" placeholder="Title" />
+            <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="field" placeholder="Description" />
+            <input type="number" value={editForm.basePrice} onChange={(e) => setEditForm({ ...editForm, basePrice: Number(e.target.value) })} className="field" placeholder="Price" />
+            <input value={editForm.estimatedDuration} onChange={(e) => setEditForm({ ...editForm, estimatedDuration: e.target.value })} className="field" placeholder="Duration" />
+            <input value={editForm.serviceArea} onChange={(e) => setEditForm({ ...editForm, serviceArea: e.target.value })} className="field" placeholder="Area" />
             <div className="flex gap-2 justify-end">
               <button onClick={() => setEditId(null)} className="btn btn-ghost">Cancel</button>
               <button onClick={saveEdit} className="btn btn-primary">Save</button>
@@ -101,7 +101,7 @@ export default function MyServices() {
 function Modal({ title, onClose, children }: any) {
   return (
     <div className="fixed inset-0 bg-black/60 z-50 grid place-items-center p-4" onClick={onClose}>
-      <div className="bg-[var(--panel)] border border-[var(--line)] rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+      <div className="panel w-full max-w-md" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-bold mb-3">{title}</h3>
         {children}
       </div>

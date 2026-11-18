@@ -32,13 +32,13 @@ export default function CustomerBookings() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">My Bookings</h1>
+      <h1 className="page-heading" style={{marginBottom:28}}>My Bookings</h1>
       {bookings.length === 0 ? (
         <Empty text="No bookings yet." />
       ) : (
         <div className="space-y-4">
           {bookings.map((b) => (
-            <div key={b._id} className="bg-[var(--panel)] border border-[var(--line)] rounded-xl p-5">
+            <div key={b._id} className="panel">
               <div className="flex flex-col md:flex-row gap-4">
                 <img src={b.serviceImage} alt="" className="w-full md:w-24 h-24 object-cover rounded-lg" />
                 <div className="flex-1">
@@ -89,7 +89,7 @@ export default function CustomerBookings() {
                 <button key={n} onClick={() => setRating(n)} className={`text-2xl ${n <= rating ? "text-[var(--accent)]" : "text-[var(--muted)]"}`}>★</button>
               ))}
             </div>
-            <textarea value={reviewText} onChange={(e) => setReviewText(e.target.value)} placeholder="Short review..." className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" rows={3} />
+            <textarea value={reviewText} onChange={(e) => setReviewText(e.target.value)} placeholder="Short review..." className="field" rows={3} />
             <div className="flex gap-2 justify-end">
               <button onClick={() => setReviewBooking(null)} className="btn btn-ghost">Cancel</button>
               <button onClick={async () => {
@@ -128,7 +128,7 @@ function StatusTimeline({ status, paymentStatus }: { status: string; paymentStat
 function Modal({ title, onClose, children }: any) {
   return (
     <div className="fixed inset-0 bg-black/60 z-50 grid place-items-center p-4" onClick={onClose}>
-      <div className="bg-[var(--panel)] border border-[var(--line)] rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+      <div className="panel w-full max-w-md" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-bold mb-3">{title}</h3>
         {children}
       </div>
