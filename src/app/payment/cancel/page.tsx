@@ -1,14 +1,4 @@
-import Link from "next/link";
-
+import StatusShell from "@/components/shared/StatusShell";
 export default function CancelPage() {
-  return (
-    <div className="min-h-screen grid place-items-center px-4">
-      <div className="bg-[var(--panel)] border border-[var(--line)] rounded-2xl p-8 max-w-md text-center">
-        <div className="text-5xl mb-4">❌</div>
-        <h1 className="text-2xl font-bold mb-2">Payment Cancelled</h1>
-        <p className="text-[var(--muted)] text-sm mb-6">No charges were made. You can try again.</p>
-        <Link href="/dashboard/customer/bookings" className="btn btn-primary"><span>Try Again</span></Link>
-      </div>
-    </div>
-  );
+  return <StatusShell icon="🚫" title="Payment cancelled" message="No charges were made. Your job is still waiting — you can try again anytime." action="/dashboard/customer/bookings" actionLabel="Back to My Bookings" />;
 }
