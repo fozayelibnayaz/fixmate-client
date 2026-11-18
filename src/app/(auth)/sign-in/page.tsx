@@ -3,7 +3,7 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { setToken } from "@/lib/utils";
+import { fetchJwt } from "@/lib/utils";
 import { toast } from "sonner";
 
 function SignInForm() {
@@ -21,7 +21,7 @@ function SignInForm() {
       const res: any = await authClient.signIn.email({ email, password });
       if (res?.error) throw new Error(res.error.message || "Invalid credentials");
       toast.success("Welcome back!");
-      try { const t: any = await authClient.token?.(); const tok = t?.data?.token || t?.token; if (tok) setToken(tok); } catch {}
+      await fetchJwt();
       const s: any = await authClient.getSession();
       const role = s?.data?.user?.role || "customer";
       if (callbackUrl) router.push(callbackUrl);

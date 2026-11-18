@@ -17,6 +17,21 @@ export function setToken(t: string | null) {
   else localStorage.removeItem("fixmate_token");
 }
 
+export async function fetchJwt(): Promise<string | null> {
+  if (typeof window === "undefined") return null;
+  try {
+    const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const res = await fetch(`${base}/api/auth/token`, { credentials: "include" });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const tok = json?.token;
+    if (tok) setToken(tok);
+    return tok || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function api<T = any>(path: string, init: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = { ...(init.headers as any) };

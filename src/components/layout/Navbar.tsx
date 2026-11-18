@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { setToken } from "@/lib/utils";
+import { setToken, fetchJwt } from "@/lib/utils";
 import { Menu, X, LogOut, User, LayoutDashboard } from "lucide-react";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 
@@ -45,12 +45,7 @@ export default function Navbar() {
 
   // fetch JWT when logged in
   useEffect(() => {
-    if (user) {
-      authClient.token?.().then((r: any) => {
-        const t = r?.data?.token || r?.token;
-        if (t) setToken(t);
-      }).catch(() => {});
-    }
+    if (user) fetchJwt().catch(() => {});
   }, [user]);
 
   return (

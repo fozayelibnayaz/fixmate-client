@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { setToken } from "@/lib/utils";
+import { fetchJwt } from "@/lib/utils";
 import { Menu, X, Home } from "lucide-react";
 
 const MENUS: Record<string, { label: string; href: string }[]> = {
@@ -43,8 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       const allowed = pathname.startsWith(`/dashboard/${role}`) || pathname === "/dashboard/profile";
       if (!allowed) router.push(role === "admin" ? "/dashboard/admin" : role === "technician" ? "/dashboard/technician" : "/dashboard/customer");
       setLoading(false);
-      // fetch token
-      authClient.token?.().then((t: any) => { const tok = t?.data?.token || t?.token; if (tok) setToken(tok); }).catch(() => {});
+      fetchJwt().catch(() => {});
     });
   }, [pathname, router]);
 

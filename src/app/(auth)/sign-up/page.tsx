@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { setToken } from "@/lib/utils";
+import { fetchJwt } from "@/lib/utils";
 import { toast } from "sonner";
 
 function passwordErrors(p: string): string[] {
@@ -34,7 +34,7 @@ export default function SignUpPage() {
       const res: any = await authClient.signUp.email({ email, password, name, role } as any);
       if (res?.error) throw new Error(res.error.message || "Sign up failed");
       toast.success("Account created! Redirecting...");
-      try { const t: any = await authClient.token?.(); const tok = t?.data?.token || t?.token; if (tok) setToken(tok); } catch {}
+      await fetchJwt();
       router.push(`/dashboard/${role === "technician" ? "technician" : "customer"}`);
     } catch (err: any) {
       toast.error(err.message || "Sign up failed");
