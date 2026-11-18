@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { setToken } from "@/lib/utils";
-import { Menu, X, LogOut, User, LayoutDashboard, Moon, Sun } from "lucide-react";
+import { Menu, X, LogOut, User, LayoutDashboard } from "lucide-react";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 import { useTheme } from "next-themes";
 
 const PUBLIC_LINKS = [
@@ -19,7 +20,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [session, setSession] = useState<any>(null);
-  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -64,7 +64,7 @@ export default function Navbar() {
           ))}
         </div>
         <div className="nav-actions">
-          <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="btn btn-ghost" style={{ padding: "8px 10px" }}><span>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</span></button>
+          <ThemeToggle />
           {user ? (
             <div className="relative group">
               <button className="flex items-center gap-2">
