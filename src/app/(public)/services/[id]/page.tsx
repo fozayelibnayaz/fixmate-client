@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { api, SERVER_URL, setToken } from "@/lib/utils";
+import { FALLBACK_SERVICES } from "@/lib/fallback";
 import { Calendar, MapPin, User, Clock, DollarSign } from "lucide-react";
 
 export default function ServiceDetailPage() {
@@ -26,7 +27,9 @@ export default function ServiceDetailPage() {
         setService(s);
         try { const r = await api(`/api/bookings/service/${id}/rating`); setRating(r); } catch {}
       } catch {
-        setNotFound(true);
+        const fb = FALLBACK_SERVICES.find((s) => s._id === id);
+        if (fb) setService(fb);
+        else setNotFound(true);
       } finally {
         setLoading(false);
       }
