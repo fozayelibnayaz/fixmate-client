@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 export default function Hero() {
   return (
     <header className="hero">
@@ -11,8 +12,8 @@ export default function Hero() {
           <h1 className="hero-usp">Broken device? <em>Get it fixed.</em></h1>
           <p className="hero-sub">Verified technicians. Trackable jobs. Pay only after the fix.</p>
           <div className="hero-cta">
-            <a href="/services" className="btn btn-primary"><span>Browse services →</span></a>
-            <a href="/#pipeline" className="btn btn-ghost"><span>See how it works</span></a>
+            <Link href="/services" className="btn btn-primary"><span>Browse services →</span></Link>
+            <Link href="/#pipeline" className="btn btn-ghost"><span>See how it works</span></Link>
           </div>
         </div>
         <div className="hero-visual">
