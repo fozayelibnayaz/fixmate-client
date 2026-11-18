@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/utils";
+import { FALLBACK_SERVICES } from "@/lib/fallback";
 
 export default function FeaturedServices() {
   const [services, setServices] = useState<any[]>([]);
   useEffect(() => {
-    api("/api/services?limit=6&sort=newest").then((r) => setServices(r.data || [])).catch(() => {});
+    api("/api/services?limit=6&sort=newest").then((r) => setServices(r.data?.length ? r.data : FALLBACK_SERVICES)).catch(() => setServices(FALLBACK_SERVICES));
   }, []);
   if (!services.length) {
     return <div className="text-[var(--muted)] text-center py-10">Loading services...</div>;
