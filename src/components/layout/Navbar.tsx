@@ -10,6 +10,8 @@ import ThemeToggle from "@/components/shared/ThemeToggle";
 const PUBLIC_LINKS = [
   { href: "/", label: "home" },
   { href: "/services", label: "services" },
+  { href: "/#pipeline", label: "pipeline" },
+  { href: "/#tracker", label: "tracker" },
   { href: "/about", label: "about" },
 ];
 

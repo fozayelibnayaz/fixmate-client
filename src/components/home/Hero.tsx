@@ -8,12 +8,7 @@ export default function Hero() {
       <div className="container hero-content">
         <div>
           <div className="hero-meta"><span>FIXMATE · ON-DEMAND REPAIR</span><span className="live">SYSTEM ONLINE</span></div>
-          <h1>
-            <span className="line"><span>Every broken device,</span></span>
-            <span className="line"><span>dispatched to a <em>verified</em></span></span>
-            <span className="line"><span>technician — tracked,</span></span>
-            <span className="line"><span>paid only after the fix.</span></span>
-          </h1>
+          <h1 style={{ lineHeight: 1.05 }}>Every broken device, dispatched to a <em>verified</em> technician — tracked, paid only after the fix.</h1>
           <p className="hero-sub">FixMate routes your repair to a checked technician, moves the job through a clear status pipeline, and unlocks payment only after the work is delivered. No paying upfront. No guessing what's happening.</p>
           <div className="hero-cta">
             <a href="#services" className="btn btn-primary"><span>Browse services →</span></a>
