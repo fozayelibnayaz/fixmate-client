@@ -6,7 +6,6 @@ import { authClient } from "@/lib/auth-client";
 import { setToken } from "@/lib/utils";
 import { Menu, X, LogOut, User, LayoutDashboard } from "lucide-react";
 import ThemeToggle from "@/components/shared/ThemeToggle";
-import { useTheme } from "next-themes";
 
 const PUBLIC_LINKS = [
   { href: "/", label: "home" },
