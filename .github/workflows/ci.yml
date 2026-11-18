@@ -23,6 +23,16 @@ jobs:
       - run: npx tsc --noEmit
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      BETTER_AUTH_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: ci-secret
+      MONGODB_URI: mongodb://127.0.0.1:27017/fixmate
+      NEXT_PUBLIC_SERVER_URL: http://localhost:5001
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_ci
+      NEXT_PUBLIC_IMGBB_API_KEY: ci
+      GOOGLE_CLIENT_ID: ci
+      GOOGLE_CLIENT_SECRET: ci
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,6 +41,16 @@ jobs:
       - run: npm run build
   e2e:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      BETTER_AUTH_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: ci-secret
+      MONGODB_URI: mongodb://127.0.0.1:27017/fixmate
+      NEXT_PUBLIC_SERVER_URL: http://localhost:5001
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_ci
+      NEXT_PUBLIC_IMGBB_API_KEY: ci
+      GOOGLE_CLIENT_ID: ci
+      GOOGLE_CLIENT_SECRET: ci
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
