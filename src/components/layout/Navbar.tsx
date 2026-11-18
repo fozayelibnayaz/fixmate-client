@@ -20,6 +20,7 @@ export default function Navbar() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
@@ -29,8 +30,12 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    authClient.getSession().then((s: any) => setSession(s?.data ?? null));
+    authClient.getSession().then((s: any) => setSession(s?.data ?? null)).catch(() => {});
   }, [pathname]);
+
+  useEffect(() => {
+    if (session?.user) fetchJwt().catch(() => {});
+  }, [session]);
 
   const user = session?.user;
   const role = (user?.role as string) || "customer";
@@ -40,18 +45,14 @@ export default function Navbar() {
     await authClient.signOut();
     setToken(null);
     setSession(null);
+    setUserOpen(false);
     router.push("/");
   }
-
-  // fetch JWT when logged in
-  useEffect(() => {
-    if (user) fetchJwt().catch(() => {});
-  }, [user]);
 
   return (
     <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
       <div className="container nav-inner">
-        <Link href="/" className="brand">
+        <Link href="/" className="brand" onClick={() => setOpen(false)}>
           <span className="brand-mark">🔧</span>FixMate
         </Link>
         <div className="nav-links" style={open ? { display: "flex", position: "absolute", top: 68, left: 0, right: 0, flexDirection: "column", background: "var(--bg2)", padding: "18px 40px", borderBottom: "1px solid var(--line)", gap: 14 } : {}}>
@@ -62,19 +63,21 @@ export default function Navbar() {
         <div className="nav-actions">
           <ThemeToggle />
           {user ? (
-            <div className="relative group">
-              <button className="flex items-center gap-2">
+            <div className="relative">
+              <button onClick={() => setUserOpen(!userOpen)} className="flex items-center gap-2">
                 <img src={user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name||"U")}&background=00e0c6&color=0a0c0b`} alt="" className="w-9 h-9 rounded-full border border-[var(--line2)]" />
               </button>
-              <div className="absolute right-0 top-12 w-56 bg-[var(--panel)] border border-[var(--line)] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 p-2">
-                <div className="px-3 py-2 border-b border-[var(--line)] mb-1">
-                  <p className="text-sm font-semibold">{user.name}</p>
-                  <span className="text-xs font-mono text-[var(--accent)] uppercase">{role}</span>
+              {userOpen && (
+                <div className="absolute right-0 top-12 w-56 bg-[var(--panel)] border border-[var(--line)] rounded-xl shadow-xl z-50 p-2">
+                  <div className="px-3 py-2 border-b border-[var(--line)] mb-1">
+                    <p className="text-sm font-semibold">{user.name}</p>
+                    <span className="text-xs font-mono text-[var(--accent)] uppercase">{role}</span>
+                  </div>
+                  <Link href={dashPath} onClick={() => setUserOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-[var(--panel2)] rounded-lg"><LayoutDashboard size={14} /> Dashboard</Link>
+                  <Link href="/dashboard/profile" onClick={() => setUserOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-[var(--panel2)] rounded-lg"><User size={14} /> Update Profile</Link>
+                  <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-[var(--panel2)] rounded-lg w-full text-left text-red-400"><LogOut size={14} /> Sign Out</button>
                 </div>
-                <Link href={dashPath} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-[var(--panel2)] rounded-lg"><LayoutDashboard size={14} /> Dashboard</Link>
-                <Link href="/dashboard/profile" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-[var(--panel2)] rounded-lg"><User size={14} /> Update Profile</Link>
-                <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-[var(--panel2)] rounded-lg w-full text-left text-red-400"><LogOut size={14} /> Sign Out</button>
-              </div>
+              )}
             </div>
           ) : (
             <>
