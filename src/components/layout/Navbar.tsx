@@ -61,7 +61,7 @@ export default function Navbar() {
         </Link>
         <div className="nav-links" style={open ? { display: "flex", position: "absolute", top: 68, left: 0, right: 0, flexDirection: "column", background: "var(--bg2)", padding: "18px 40px", borderBottom: "1px solid var(--line)", gap: 14 } : {}}>
           {PUBLIC_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className={`nav-link ${pathname === l.href ? "active" : ""}`}>{l.label}</Link>
+            <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className={`nav-link ${pathname === l.href ? "active" : ""}`}>{l.label}</Link>
           ))}
         </div>
         <div className="nav-actions">
