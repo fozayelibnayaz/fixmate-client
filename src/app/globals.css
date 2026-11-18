@@ -227,7 +227,7 @@ body::before {
 .hero-meta .live { color: var(--accent); display: flex; align-items: center; gap: 8px; }
 .hero-meta .live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 1.8s infinite; box-shadow: 0 0 0 4px var(--glow); }
 @keyframes pulse { 50% { box-shadow: 0 0 0 9px #00e0c600; } }
-.hero-usp { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: clamp(40px, 5.5vw, 78px); line-height: 1.05; letter-spacing: -.04em; white-space: nowrap; }
+.hero .hero-usp { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: clamp(32px, 4vw, 56px) !important; line-height: 1.06; letter-spacing: -.04em; white-space: nowrap; }
 .hero h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: clamp(36px, 4.5vw, 64px); line-height: 1.05; letter-spacing: -.04em; white-space: nowrap; }
 .hero h1 .line { display: block; overflow: hidden; padding-bottom: .05em; }
 .hero h1 .line span { display: inline-block; transform: translateY(115%); animation: lineUp 1.1s cubic-bezier(.16,1,.3,1) forwards; }
