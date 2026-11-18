@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { api, SERVER_URL, setToken } from "@/lib/utils";
 import { FALLBACK_SERVICES } from "@/lib/fallback";
 import { Calendar, MapPin, User, Clock, DollarSign } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ServiceDetailPage() {
   const { id } = useParams();
@@ -57,10 +58,10 @@ export default function ServiceDetailPage() {
         method: "POST",
         body: JSON.stringify({ serviceId: id, ...form }),
       });
-      alert("Request submitted! Redirecting to My Bookings...");
+      toast.success("Request submitted! Redirecting to My Bookings...");
       router.push("/dashboard/customer/bookings");
     } catch (err: any) {
-      alert(err.message || "Failed to submit request");
+      toast.error(err.message || "Failed to submit request");
     } finally {
       setSubmitting(false);
     }
@@ -120,27 +121,27 @@ export default function ServiceDetailPage() {
                 <form onSubmit={submitRequest} className="mt-6 space-y-4 bg-[var(--panel)] border border-[var(--line)] rounded-xl p-5">
                   <div>
                     <label className="text-xs text-[var(--muted)]">Name</label>
-                    <input value={user.name} readOnly className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+                    <input value={user.name} readOnly className="field" />
                   </div>
                   <div>
                     <label className="text-xs text-[var(--muted)]">Email</label>
-                    <input value={user.email} readOnly className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+                    <input value={user.email} readOnly className="field" />
                   </div>
                   <div>
                     <label className="text-xs text-[var(--muted)]">Phone</label>
-                    <input required value={form.customerPhone} onChange={(e) => setForm({ ...form, customerPhone: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+                    <input required value={form.customerPhone} onChange={(e) => setForm({ ...form, customerPhone: e.target.value })} className="field" />
                   </div>
                   <div>
                     <label className="text-xs text-[var(--muted)]">Address</label>
-                    <input required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+                    <input required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="field" />
                   </div>
                   <div>
                     <label className="text-xs text-[var(--muted)]">Preferred Date</label>
-                    <input type="date" required min={minDate} value={form.preferredDate} onChange={(e) => setForm({ ...form, preferredDate: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" />
+                    <input type="date" required min={minDate} value={form.preferredDate} onChange={(e) => setForm({ ...form, preferredDate: e.target.value })} className="field" />
                   </div>
                   <div>
                     <label className="text-xs text-[var(--muted)]">Problem Description (min 20 chars)</label>
-                    <textarea required minLength={20} value={form.problemDescription} onChange={(e) => setForm({ ...form, problemDescription: e.target.value })} className="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-lg px-3 py-2 text-sm" rows={4} />
+                    <textarea required minLength={20} value={form.problemDescription} onChange={(e) => setForm({ ...form, problemDescription: e.target.value })} className="field" rows={4} />
                   </div>
                   <button type="submit" disabled={submitting} className="btn btn-primary w-full"><span>{submitting ? "Submitting..." : "Submit Request"}</span></button>
                 </form>
