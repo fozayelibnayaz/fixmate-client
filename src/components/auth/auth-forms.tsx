@@ -4,12 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import { DASHBOARD_HOME } from "@/lib/constants";
+import { apiFetch } from "@/lib/api";
+import { API_URL, DASHBOARD_HOME } from "@/lib/constants";
 import { signInSchema, signUpSchema, type SignInValues, type SignUpValues } from "@/lib/schemas";
 import type { Role } from "@/lib/types";
 import { useAppDispatch } from "@/store/hooks";
@@ -39,9 +40,48 @@ const AuthShell = ({
   </section>
 );
 
+const useGoogleSignIn = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void apiFetch<{ providers: { google: boolean } }>("/api/session/providers")
+      .then((result) => {
+        if (active) setEnabled(result.providers.google);
+      })
+      .catch(() => {
+        if (active) setEnabled(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return enabled;
+};
+
+const GoogleSignInLink = ({ enabled, next = "" }: { enabled: boolean; next?: string }) => {
+  if (!enabled) return null;
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "";
+  const query = safeNext ? `?next=${encodeURIComponent(safeNext)}` : "";
+  return (
+    <>
+      <p className="fm-muted" style={{ textAlign: "center", fontSize: 13, margin: "18px 0 10px" }}>or</p>
+      <a
+        className="fm-btn fm-btn-ghost"
+        href={`${API_URL}/api/session/oauth/google${query}`}
+        style={{ width: "100%", justifyContent: "center", textDecoration: "none" }}
+      >
+        Continue with Google
+      </a>
+    </>
+  );
+};
+
 export const SignUpForm = ({ initialRole }: { initialRole: "customer" | "technician" }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const googleEnabled = useGoogleSignIn();
   const [role, setRole] = useState<"customer" | "technician">(initialRole);
   const {
     register,
@@ -109,6 +149,7 @@ export const SignUpForm = ({ initialRole }: { initialRole: "customer" | "technic
           {isSubmitting ? "Creating account…" : <>Create account <ArrowRight size={16} /></>}
         </Button>
       </form>
+      <GoogleSignInLink enabled={googleEnabled} />
     </AuthShell>
   );
 };
@@ -116,6 +157,7 @@ export const SignUpForm = ({ initialRole }: { initialRole: "customer" | "technic
 export const SignInForm = ({ next }: { next: string }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const googleEnabled = useGoogleSignIn();
   const {
     register,
     handleSubmit,
@@ -129,7 +171,7 @@ export const SignInForm = ({ next }: { next: string }) => {
     try {
       const user = await dispatch(signInThunk(values)).unwrap();
       toast.success(`Welcome back, ${user.name.split(" ")[0]}!`);
-      const target = next.startsWith("/") ? next : DASHBOARD_HOME[user.role as Role];
+      const target = next.startsWith("/") && !next.startsWith("//") ? next : DASHBOARD_HOME[user.role as Role];
       router.push(target);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Invalid email or password");
@@ -150,6 +192,7 @@ export const SignInForm = ({ next }: { next: string }) => {
           {isSubmitting ? "Signing in…" : <>Sign in <ArrowRight size={16} /></>}
         </Button>
       </form>
+      <GoogleSignInLink enabled={googleEnabled} next={next} />
     </AuthShell>
   );
 };

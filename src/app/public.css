@@ -133,6 +133,21 @@
   .cl-root .fm-section, .cl-root .fm-section-sm { padding: 64px 0; padding-top: 110px; }
 }
 
+/* Dialogs and shared forms use class-based padding, which the broad cl-root
+   reset above would otherwise zero out. Restore generous spacing so labels,
+   inputs and buttons never touch the dialog border. */
+.cl-root .fm-modal-backdrop { padding: 20px; }
+.cl-root .fm-modal { padding: 32px; }
+.cl-root .fm-request-form { padding: 8px 4px 4px; }
+.cl-root .fm-request-form .fm-field { margin-bottom: 18px; }
+.cl-root .fm-request-form > div:last-child { padding-top: 8px; }
+.cl-root .fm-textarea { min-height: 132px; }
+@media (max-width: 560px) {
+  .cl-root .fm-modal-backdrop { padding: 12px; }
+  .cl-root .fm-modal { padding: 22px; }
+  .cl-root .fm-request-form { padding: 6px 2px 2px; }
+}
+
 .cl-grain::before {
   content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .05; z-index: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
