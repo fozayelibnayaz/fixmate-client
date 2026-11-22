@@ -17,7 +17,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
     <Provider store={store}>
       {/* Keep next-themes outside Chakra so its hydration script is rendered in
           the same position on the server and on the client. */}
-      <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem={false}>
+      <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false}>
         <ChakraProvider value={defaultSystem}>
           {children}
           <Toaster position="top-right" richColors closeButton />

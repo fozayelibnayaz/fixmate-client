@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Clock3, MapPin } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Clock3, MapPin, Star } from "lucide-react";
 import Link from "next/link";
 import { money } from "@/lib/format";
 import type { Service } from "@/lib/types";
@@ -21,7 +21,15 @@ export const ServiceCard = ({ service }: { service: Service }) => (
       />
     </Link>
     <div className="fm-service-body">
-      <span className="fm-pill" style={{ alignSelf: "flex-start" }}>{service.category}</span>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        <span className="fm-pill">{service.category}</span>
+        {service.technicianPlan === "pro" ? (
+          <span className="fm-pro-badge"><BadgeCheck size={12} aria-hidden="true" /> Verified Pro</span>
+        ) : null}
+        {service.reviewCount > 0 ? (
+          <span className="fm-rating"><Star size={12} fill="currentColor" aria-hidden="true" /> {service.averageRating.toFixed(1)} ({service.reviewCount})</span>
+        ) : null}
+      </div>
       <h3>{service.title}</h3>
       <div className="fm-service-meta">
         <span className="fm-pill"><Clock3 size={12} /> {service.estimatedDuration}</span>

@@ -1,5 +1,11 @@
 import type { BookingStatus, Role } from "./types";
 
+export const ACTIVE_BOOKING_STATUSES: readonly BookingStatus[] = [
+  "requested",
+  "accepted",
+  "in-progress",
+];
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 export const CATEGORIES = [

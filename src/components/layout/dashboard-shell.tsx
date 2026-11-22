@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, CalendarCheck, CreditCard, Home, LayoutDashboard, LogOut, Menu, Plus, Receipt, Settings2, ShieldCheck, Users, Wrench, X } from "lucide-react";
+import { BarChart3, CalendarCheck, CreditCard, Crown, Home, LayoutDashboard, LogOut, Menu, Plus, Receipt, Settings2, ShieldCheck, Users, Wrench, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -24,6 +24,7 @@ const navForRole: Record<Role, Array<{ href: string; label: string; icon: React.
     { href: "/dashboard/technician/add-service", label: "Add Service", icon: <Plus size={17} /> },
     { href: "/dashboard/technician/my-services", label: "My Services", icon: <Wrench size={17} /> },
     { href: "/dashboard/technician/requests", label: "Requests", icon: <CalendarCheck size={17} /> },
+    { href: "/dashboard/technician/pro", label: "Pro Plan", icon: <Crown size={17} /> },
   ],
   admin: [
     { href: "/dashboard/admin", label: "Overview", icon: <BarChart3 size={17} /> },

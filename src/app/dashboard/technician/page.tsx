@@ -1,15 +1,18 @@
 "use client";
 
-import { CheckCircle2, Clock3, Layers3 } from "lucide-react";
+import { BadgeCheck, CheckCircle2, Clock3, Crown, Layers3 } from "lucide-react";
 import Link from "next/link";
 import { MiniBarChart, PageHeader } from "@/components/dashboard/shared";
-import { StatCard, SkeletonCard } from "@/components/ui/misc";
+import { ButtonLink } from "@/components/ui/button";
+import { EmptyState, StatCard, SkeletonCard } from "@/components/ui/misc";
+import { useAuth } from "@/hooks/use-auth";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useApiData } from "@/hooks/use-api-data";
 import { shortDate } from "@/lib/format";
 import type { Booking, Service } from "@/lib/types";
 
 export default function TechnicianOverview() {
+  const { user } = useAuth();
   const { data: serviceData, loading: servicesLoading } = useApiData<{ services: Service[] }>("/api/services/mine/list");
   const { data: bookingData, loading: bookingsLoading } = useApiData<{ bookings: Booking[] }>("/api/bookings/technician");
   const services = serviceData?.services ?? [];
@@ -31,6 +34,23 @@ export default function TechnicianOverview() {
         subtitle="Manage listings, accept jobs and keep work moving."
         action={<Link href="/dashboard/technician/add-service" className="fm-btn fm-btn-blue fm-btn-sm">Add a service</Link>}
       />
+      <div className="fm-panel" style={{ padding: 18, marginBottom: 22, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ width: 38, height: 38, borderRadius: 12, display: "grid", placeItems: "center", background: "var(--fm-blue)", color: "#fff" }}><Crown size={18} /></span>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <strong style={{ fontSize: 14 }}>{user?.plan === "pro" ? "Pro Technician Plan active" : "Need unlimited listings?"}</strong>
+              {user?.plan === "pro" ? <span className="fm-pro-badge"><BadgeCheck size={12} aria-hidden="true" /> Verified Pro</span> : null}
+            </div>
+            <div className="fm-muted" style={{ fontSize: 12, marginTop: 3 }}>
+              {user?.plan === "pro" ? "Your services carry the Verified Pro badge." : `Free plans include 3 services. Upgrade for ৳499/month.`}
+            </div>
+          </div>
+        </div>
+        <ButtonLink href="/dashboard/technician/pro" variant={user?.plan === "pro" ? "ghost" : "blue"} size="sm">
+          {user?.plan === "pro" ? "Manage plan" : "View Pro Plan"}
+        </ButtonLink>
+      </div>
       {servicesLoading || bookingsLoading ? (
         <div className="fm-grid fm-grid-3">{[1, 2, 3].map((key) => <SkeletonCard key={key} />)}</div>
       ) : (
@@ -44,7 +64,7 @@ export default function TechnicianOverview() {
             <div className="fm-panel">
               <div className="fm-panel-head"><h3 style={{ fontSize: 15, margin: 0 }}>Incoming requests</h3><Link href="/dashboard/technician/requests" className="fm-muted" style={{ fontSize: 13 }}>Manage →</Link></div>
               {requests.length === 0 ? (
-                <div style={{ padding: 40, textAlign: "center", color: "var(--fm-muted)" }}>No requests yet.</div>
+                <EmptyState icon="📥" title="No requests yet" description="New customer repair requests will appear here." />
               ) : (
                 <table className="fm-table">
                   <thead><tr><th>Customer</th><th>Service</th><th>Date</th><th>Status</th></tr></thead>

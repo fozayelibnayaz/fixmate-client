@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PageHeader } from "@/components/dashboard/shared";
-import { Spinner } from "@/components/ui/misc";
+import { EmptyState, Spinner } from "@/components/ui/misc";
 import { PaymentBadge, StatusBadge } from "@/components/ui/status-badge";
 import { useApiData } from "@/hooks/use-api-data";
 import { money, shortDate } from "@/lib/format";
@@ -31,7 +31,9 @@ export default function AdminBookingsPage() {
           </button>
         ))}
       </div>
-      {loading ? <Spinner /> : (
+      {loading ? <Spinner /> : (data?.bookings.length ?? 0) === 0 ? (
+        <div className="fm-panel"><EmptyState icon="📋" title="No bookings here" description="No repair jobs match this status filter." /></div>
+      ) : (
         <div className="fm-panel">
           <table className="fm-table">
             <thead><tr><th>Service</th><th>Customer</th><th>Technician</th><th>Date</th><th>Amount</th><th>Status</th><th>Payment</th></tr></thead>

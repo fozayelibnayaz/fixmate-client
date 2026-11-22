@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CATEGORIES, DASHBOARD_HOME, STATUS_LABEL, STATUS_TONE } from "./constants";
+import { ACTIVE_BOOKING_STATUSES, CATEGORIES, DASHBOARD_HOME, STATUS_LABEL, STATUS_TONE } from "./constants";
 
 describe("shared constants", () => {
   it("maps every booking status to a label and a tone", () => {
@@ -29,5 +29,9 @@ describe("shared constants", () => {
     expect(CATEGORIES).toHaveLength(7);
     expect(CATEGORIES).toContain("Smartphone");
     expect(CATEGORIES).toContain("Electrical");
+  });
+
+  it("treats only requested, accepted and in-progress jobs as active", () => {
+    expect(ACTIVE_BOOKING_STATUSES).toEqual(["requested", "accepted", "in-progress"]);
   });
 });

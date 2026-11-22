@@ -1,8 +1,9 @@
 "use client";
 
-import { ChevronDown, LayoutDashboard, LogOut, Menu, UserRound, Wrench, X } from "lucide-react";
+import { ChevronDown, LayoutDashboard, LogOut, Menu, Moon, Sun, UserRound, Wrench, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
@@ -27,6 +28,7 @@ export const PublicHeader = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { user, signOut } = useAuth();
+  const { resolvedTheme, setTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -84,6 +86,14 @@ export const PublicHeader = () => {
           </nav>
 
           <div className="cl-nav-actions">
+            <button
+              className="cl-theme-toggle"
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              aria-label="Toggle color theme"
+              title={mounted && resolvedTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            >
+              {mounted && resolvedTheme === "dark" ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
+            </button>
             {accountUser ? (
               <div style={{ position: "relative" }}>
                 <button
@@ -151,8 +161,15 @@ export const PublicHeader = () => {
           </>
         ) : (
           <>
+            <div className="cl-mobile-account">
+              <strong>{accountUser.name}</strong>
+              <span className="cl-status">{accountUser.role}</span>
+            </div>
             <Link href={DASHBOARD_HOME[accountUser.role]}>Dashboard</Link>
             <Link href="/dashboard/profile">Update Profile</Link>
+            <button className="cl-mobile-signout" onClick={handleSignOut}>
+              <LogOut size={15} aria-hidden="true" /> Sign Out
+            </button>
           </>
         )}
       </nav>

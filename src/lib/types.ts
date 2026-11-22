@@ -1,4 +1,6 @@
 export type Role = "customer" | "technician" | "admin";
+export type Plan = "free" | "pro";
+export type PaymentKind = "booking" | "pro_subscription";
 export type ApprovalStatus = "pending" | "approved" | "rejected";
 export type BookingStatus =
   | "requested"
@@ -17,6 +19,7 @@ export interface User {
   phone: string;
   area: string;
   bio: string;
+  plan: Plan;
   createdAt: string;
 }
 
@@ -34,6 +37,9 @@ export interface Service {
   technicianEmail: string;
   approvalStatus: ApprovalStatus;
   isAvailable: boolean;
+  technicianPlan: Plan;
+  averageRating: number;
+  reviewCount: number;
   createdAt: string;
 }
 
@@ -73,6 +79,8 @@ export interface Payment {
   currency: string;
   transactionId: string;
   stripeSessionId: string;
+  kind: PaymentKind;
+  plan?: Plan;
   paymentStatus: "paid";
   paidAt: string;
 }

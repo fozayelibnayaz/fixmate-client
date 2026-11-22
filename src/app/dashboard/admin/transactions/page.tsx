@@ -1,7 +1,7 @@
 "use client";
 
 import { PageHeader } from "@/components/dashboard/shared";
-import { Spinner } from "@/components/ui/misc";
+import { EmptyState, Spinner } from "@/components/ui/misc";
 import { useApiData } from "@/hooks/use-api-data";
 import { money, shortDate, truncate } from "@/lib/format";
 import type { Payment } from "@/lib/types";
@@ -11,11 +11,13 @@ export default function AdminTransactionsPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Admin dashboard" title="Transactions" subtitle="Every completed repair payment, recorded in BDT." />
+      <PageHeader eyebrow="Admin dashboard" title="Transactions" subtitle="Every paid repair and Pro subscription, recorded in BDT." />
       <div style={{ marginBottom: 22, maxWidth: 300 }}>
         <div className="fm-stat"><div className="fm-stat-label">Total revenue</div><div className="fm-stat-value">{money(data?.revenue ?? 0)}</div></div>
       </div>
-      {loading ? <Spinner /> : (
+      {loading ? <Spinner /> : (data?.payments.length ?? 0) === 0 ? (
+        <div className="fm-panel"><EmptyState icon="💳" title="No transactions yet" description="Paid bookings and Pro subscriptions will appear here." /></div>
+      ) : (
         <div className="fm-panel">
           <table className="fm-table">
             <thead><tr><th>Service</th><th>Customer</th><th>Technician</th><th>Amount</th><th>Transaction</th><th>Date</th></tr></thead>

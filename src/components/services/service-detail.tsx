@@ -1,12 +1,14 @@
 "use client";
 
-import { ArrowLeft, Clock3, MapPin, ShieldCheck, Wrench } from "lucide-react";
+import { ArrowLeft, BadgeCheck, Clock3, MapPin, ShieldCheck, Star, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useApiData } from "@/hooks/use-api-data";
 import { useAuth } from "@/hooks/use-auth";
+import { ACTIVE_BOOKING_STATUSES } from "@/lib/constants";
 import { money } from "@/lib/format";
-import type { Service } from "@/lib/types";
+import type { Booking, Service } from "@/lib/types";
 import { RequestModal } from "./request-modal";
 
 export const ServiceDetail = ({ service }: { service: Service }) => {
@@ -14,12 +16,22 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const accountUser = mounted ? user : null;
+  const { data: bookingData } = useApiData<{ bookings: Booking[] }>(
+    accountUser?.role === "customer" ? "/api/bookings/my" : null,
+  );
+
+  // A duplicate active request is blocked on the server; surface it here so the
+  // customer sees it before filling in the form.
+  const activeRequest = bookingData?.bookings.find(
+    (booking) =>
+      booking.serviceId === service._id && ACTIVE_BOOKING_STATUSES.includes(booking.status),
+  );
 
   // The session arrives after hydration; keep the initial client render
   // signed-out so it matches the server HTML.
   useEffect(() => setMounted(true), []);
 
-  const accountUser = mounted ? user : null;
   const canRequest = accountUser?.role === "customer";
 
   const handleRequest = () => {
@@ -27,7 +39,7 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
       router.push(`/sign-in?next=${encodeURIComponent(`/services/${service._id}`)}`);
       return;
     }
-    if (!canRequest) return;
+    if (!canRequest || activeRequest) return;
     setModalOpen(true);
   };
 
@@ -64,7 +76,12 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
                   {service.technicianName.charAt(0)}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 750, fontSize: 17 }}>{service.technicianName}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ fontWeight: 750, fontSize: 17 }}>{service.technicianName}</span>
+                    {service.technicianPlan === "pro" ? (
+                      <span className="fm-pro-badge"><BadgeCheck size={12} aria-hidden="true" /> Verified Pro</span>
+                    ) : null}
+                  </div>
                   <div className="fm-muted" style={{ fontSize: 13 }}>{service.serviceArea} · Verified technician</div>
                 </div>
               </div>
@@ -75,7 +92,12 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
           </div>
 
           <div>
-            <span className="fm-pill">{service.category}</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <span className="fm-pill">{service.category}</span>
+              {service.reviewCount > 0 ? (
+                <span className="fm-rating"><Star size={14} fill="currentColor" aria-hidden="true" /> {service.averageRating.toFixed(1)} · {service.reviewCount} review{service.reviewCount === 1 ? "" : "s"}</span>
+              ) : null}
+            </div>
             <h1 className="fm-h2" style={{ marginTop: 18 }}>{service.title}</h1>
             <p className="fm-lead">{service.description}</p>
             <div className="fm-grid fm-grid-2" style={{ marginTop: 30 }}>
@@ -93,10 +115,22 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
               <button
                 className="fm-btn fm-btn-blue fm-btn-block"
                 onClick={handleRequest}
-                disabled={Boolean(accountUser && !canRequest)}
+                disabled={Boolean(accountUser && !canRequest) || Boolean(activeRequest)}
               >
-                {!accountUser ? "Sign in to request a repair" : canRequest ? "Request Repair" : "Customer account needed"}
+                {!accountUser
+                  ? "Sign in to request a repair"
+                  : activeRequest
+                    ? "Request already sent"
+                    : canRequest
+                      ? "Request Repair"
+                      : "Customer account needed"}
               </button>
+              {activeRequest ? (
+                <p className="fm-muted" style={{ fontSize: 12, margin: "12px 0 0", textAlign: "center" }}>
+                  You already have an active request for this service.{" "}
+                  <Link href="/dashboard/customer/bookings" style={{ color: "var(--fm-blue)", textDecoration: "underline" }}>View it in My Bookings</Link>.
+                </p>
+              ) : null}
               {accountUser && !canRequest ? (
                 <p className="fm-muted" style={{ fontSize: 12, margin: "12px 0 0", textAlign: "center" }}>
                   Create a customer account to book a repair.

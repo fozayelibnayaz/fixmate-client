@@ -18,8 +18,15 @@ import { finalAmountSchema } from "@/lib/schemas";
 import type { Booking } from "@/lib/types";
 
 type FinalAmountValues = { finalAmount: number };
+type StatusTarget = { booking: Booking; status: "accepted" | "rejected" | "in-progress" };
 
 const filters = ["", "requested", "accepted", "in-progress", "completed"];
+
+const statusCopy: Record<StatusTarget["status"], { title: string; body: string; confirm: string }> = {
+  accepted: { title: "Accept this job?", body: "The customer will be told you accepted the repair request.", confirm: "Accept job" },
+  rejected: { title: "Reject this job?", body: "The customer will no longer be able to send this request to you.", confirm: "Reject job" },
+  "in-progress": { title: "Start work on this job?", body: "The job will move from accepted to in progress on the customer's tracker.", confirm: "Start work" },
+};
 
 export default function TechnicianRequestsPage() {
   const [filter, setFilter] = useState("");
@@ -27,6 +34,7 @@ export default function TechnicianRequestsPage() {
     `/api/bookings/technician${filter ? `?status=${filter}` : ""}`,
   );
   const [completing, setCompleting] = useState<Booking | null>(null);
+  const [statusTarget, setStatusTarget] = useState<StatusTarget | null>(null);
   const [busy, setBusy] = useState(false);
   const {
     register,
@@ -53,6 +61,14 @@ export default function TechnicianRequestsPage() {
     setCompleting(null);
     reset();
   });
+
+  const confirmStatusChange = async () => {
+    if (!statusTarget) return;
+    setBusy(true);
+    await update(statusTarget.booking, statusTarget.status);
+    setBusy(false);
+    setStatusTarget(null);
+  };
 
   const bookings = data?.bookings ?? [];
 
@@ -98,12 +114,12 @@ export default function TechnicianRequestsPage() {
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                       {booking.status === "requested" ? (
                         <>
-                          <Button variant="blue" size="sm" onClick={() => update(booking, "accepted")}>Accept</Button>
-                          <Button variant="ghost" size="sm" onClick={() => update(booking, "rejected")}><XCircle size={13} /> Reject</Button>
+                          <Button variant="blue" size="sm" onClick={() => setStatusTarget({ booking, status: "accepted" })}>Accept</Button>
+                          <Button variant="ghost" size="sm" onClick={() => setStatusTarget({ booking, status: "rejected" })}><XCircle size={13} /> Reject</Button>
                         </>
                       ) : null}
                       {booking.status === "accepted" ? (
-                        <Button variant="blue" size="sm" onClick={() => update(booking, "in-progress")}><Play size={13} /> Start Work</Button>
+                        <Button variant="blue" size="sm" onClick={() => setStatusTarget({ booking, status: "in-progress" })}><Play size={13} /> Start Work</Button>
                       ) : null}
                       {booking.status === "in-progress" ? (
                         <Button variant="blue" size="sm" onClick={() => {
@@ -136,6 +152,28 @@ export default function TechnicianRequestsPage() {
             <Button type="submit" disabled={busy}>{busy ? "Saving…" : "Complete job"}</Button>
           </div>
         </form>
+      </Modal>
+
+      <Modal
+        open={Boolean(statusTarget)}
+        onClose={() => setStatusTarget(null)}
+        title={statusTarget ? statusCopy[statusTarget.status].title : "Update job status"}
+        description={
+          statusTarget
+            ? `${statusCopy[statusTarget.status].body} ${statusTarget.booking.serviceTitle} for ${statusTarget.booking.customerName}.`
+            : undefined
+        }
+      >
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+          <Button variant="ghost" onClick={() => setStatusTarget(null)}>Keep as is</Button>
+          <Button
+            variant={statusTarget?.status === "rejected" ? "danger" : "blue"}
+            onClick={confirmStatusChange}
+            disabled={busy}
+          >
+            {busy ? "Saving…" : statusTarget ? statusCopy[statusTarget.status].confirm : "Confirm"}
+          </Button>
+        </div>
       </Modal>
     </>
   );

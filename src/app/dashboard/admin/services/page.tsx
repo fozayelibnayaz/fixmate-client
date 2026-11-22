@@ -4,28 +4,38 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/shared";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/misc";
+import { Modal } from "@/components/ui/modal";
+import { EmptyState, Spinner } from "@/components/ui/misc";
 import { ApprovalBadge } from "@/components/ui/status-badge";
 import { useApiData } from "@/hooks/use-api-data";
 import { patch } from "@/lib/api";
 import { money } from "@/lib/format";
-import type { Service } from "@/lib/types";
+import type { ApprovalStatus, Service } from "@/lib/types";
 
 const filters = ["", "pending", "approved", "rejected"];
+
+type Decision = { service: Service; approvalStatus: Extract<ApprovalStatus, "approved" | "rejected"> };
 
 export default function AdminServicesPage() {
   const [filter, setFilter] = useState("pending");
   const { data, loading, refresh } = useApiData<{ services: Service[] }>(
     `/api/admin/services${filter ? `?status=${filter}` : ""}`,
   );
+  const [decision, setDecision] = useState<Decision | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const decide = async (service: Service, approvalStatus: string) => {
+  const confirmDecision = async () => {
+    if (!decision) return;
+    setBusy(true);
     try {
-      await patch(`/api/admin/services/${service._id}/approval`, { approvalStatus });
-      toast.success(approvalStatus === "approved" ? "Service approved" : "Service rejected");
+      await patch(`/api/admin/services/${decision.service._id}/approval`, { approvalStatus: decision.approvalStatus });
+      toast.success(decision.approvalStatus === "approved" ? "Service approved" : "Service rejected");
+      setDecision(null);
       refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not update service");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -45,7 +55,7 @@ export default function AdminServicesPage() {
         ))}
       </div>
       {loading ? <Spinner /> : (data?.services.length ?? 0) === 0 ? (
-        <div className="fm-panel"><div className="fm-empty"><div className="fm-empty-icon">✅</div><h3 className="fm-h3">Nothing to review</h3><p className="fm-muted">No services match this filter.</p></div></div>
+        <div className="fm-panel"><EmptyState icon="✅" title="Nothing to review" description="No services match this filter." /></div>
       ) : (
         <div className="fm-panel">
           <table className="fm-table">
@@ -64,8 +74,8 @@ export default function AdminServicesPage() {
                   <td><ApprovalBadge status={service.approvalStatus} /></td>
                   <td>
                     <div style={{ display: "flex", gap: 6 }}>
-                      <Button variant="blue" size="sm" onClick={() => decide(service, "approved")}>Approve</Button>
-                      <Button variant="ghost" size="sm" onClick={() => decide(service, "rejected")}>Reject</Button>
+                      <Button variant="blue" size="sm" onClick={() => setDecision({ service, approvalStatus: "approved" })}>Approve</Button>
+                      <Button variant="ghost" size="sm" onClick={() => setDecision({ service, approvalStatus: "rejected" })}>Reject</Button>
                     </div>
                   </td>
                 </tr>
@@ -74,6 +84,28 @@ export default function AdminServicesPage() {
           </table>
         </div>
       )}
+
+      <Modal
+        open={Boolean(decision)}
+        onClose={() => setDecision(null)}
+        title={decision?.approvalStatus === "approved" ? "Approve this service?" : "Reject this service?"}
+        description={
+          decision
+            ? `${decision.service.title} by ${decision.service.technicianName} will be ${
+                decision.approvalStatus === "approved"
+                  ? "published on the public catalogue."
+                  : "hidden from customers until resubmitted."
+              }`
+            : undefined
+        }
+      >
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+          <Button variant="ghost" onClick={() => setDecision(null)}>Cancel</Button>
+          <Button variant={decision?.approvalStatus === "approved" ? "blue" : "danger"} onClick={confirmDecision} disabled={busy}>
+            {busy ? "Saving…" : decision?.approvalStatus === "approved" ? "Approve service" : "Reject service"}
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }
