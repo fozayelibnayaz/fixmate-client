@@ -52,7 +52,7 @@ export const RequestModal = ({ open, onClose, service, user }: RequestModalProps
   if (created) {
     return (
       <Modal open={open} onClose={close} title="Request sent">
-        <div style={{ textAlign: "center", padding: "14px 0 6px" }}>
+        <div className="fm-request-success">
           <CheckCircle2 size={52} color="#16824a" style={{ margin: "0 auto 18px" }} />
           <p className="fm-muted" style={{ lineHeight: 1.6 }}>
             {service.technicianName} has been notified. Track the job from your dashboard.
@@ -93,7 +93,7 @@ export const RequestModal = ({ open, onClose, service, user }: RequestModalProps
           error={errors.problemDescription?.message}
           {...register("problemDescription")}
         />
-        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 10 }}>
+        <div className="fm-request-actions">
           <Button type="button" variant="ghost" onClick={close}>Cancel</Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Sending…" : <>Send request <CalendarDays size={15} /></>}

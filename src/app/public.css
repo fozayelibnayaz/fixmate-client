@@ -137,15 +137,17 @@
    reset above would otherwise zero out. Restore generous spacing so labels,
    inputs and buttons never touch the dialog border. */
 .cl-root .fm-modal-backdrop { padding: 20px; }
-.cl-root .fm-modal { padding: 32px; }
-.cl-root .fm-request-form { padding: 8px 4px 4px; }
-.cl-root .fm-request-form .fm-field { margin-bottom: 18px; }
-.cl-root .fm-request-form > div:last-child { padding-top: 8px; }
+.cl-root .fm-modal { padding: 36px; }
+.cl-root .fm-request-form { padding: 16px 12px 10px; }
+.cl-root .fm-request-form .fm-field { min-width: 0; margin-bottom: 22px; }
+.cl-root .fm-request-form .fm-label { margin-bottom: 10px; overflow-wrap: anywhere; }
+.cl-root .fm-request-actions { padding-top: 10px; }
+.cl-root .fm-request-success { padding: 20px 12px 12px; }
 .cl-root .fm-textarea { min-height: 132px; }
 @media (max-width: 560px) {
   .cl-root .fm-modal-backdrop { padding: 12px; }
-  .cl-root .fm-modal { padding: 22px; }
-  .cl-root .fm-request-form { padding: 6px 2px 2px; }
+  .cl-root .fm-modal { padding: 28px 22px; }
+  .cl-root .fm-request-form { padding: 14px 10px 8px; }
 }
 
 .cl-grain::before {
