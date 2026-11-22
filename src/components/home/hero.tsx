@@ -2,139 +2,96 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { money } from "@/lib/format";
 
-type PreviewPage = {
+type RepairExample = {
   id: string;
-  hash: string;
   label: string;
-  route: string;
-  title: string;
-  subtitle: string;
-  chips: string[];
+  when: string;
+  device: string;
+  problem: string;
+  area: string;
+  technician: string;
   status: string;
-  access: string;
+  next: string;
+  price: number;
+  steps: string[];
+  completedSteps: number;
 };
 
-const previewPages: PreviewPage[] = [
+const repairExamples: RepairExample[] = [
   {
-    id: "home", hash: "/", label: "Home", route: "/",
-    title: "Broken device? Fixed.",
-    subtitle: "Verified technicians · Live tracking · Pay after the fix",
-    chips: ["1200px", "Public", "hero.fixmate"], status: "Live", access: "Everyone",
+    id: "phone",
+    label: "iPhone screen",
+    when: "Today",
+    device: "iPhone 13",
+    problem: "Cracked screen",
+    area: "Dhanmondi, Dhaka",
+    technician: "Rahim Uddin",
+    status: "Repair in progress",
+    next: "We'll message you when it is ready to collect.",
+    price: 8000,
+    steps: ["Request sent", "Technician accepted", "Repair started", "Ready to pay"],
+    completedSteps: 3,
   },
   {
-    id: "services", hash: "/services", label: "Services", route: "/services",
-    title: "Find the right repair",
-    subtitle: "12 approved services · 7 categories · Search on the server",
-    chips: ["Server filters", "Approved only", "3 per row"], status: "Live", access: "Everyone",
+    id: "ac",
+    label: "AC servicing",
+    when: "Today",
+    device: "Split AC · 1.5 ton",
+    problem: "AC not cooling",
+    area: "Mirpur, Dhaka",
+    technician: "Karim Ahmed",
+    status: "Technician accepted",
+    next: "Karim will arrive at your preferred time.",
+    price: 2500,
+    steps: ["Request sent", "Technician accepted", "Repair started", "Ready to pay"],
+    completedSteps: 2,
   },
   {
-    id: "work", hash: "/work", label: "My Jobs", route: "/dashboard/customer/bookings",
-    title: "Track every repair job",
-    subtitle: "Requested → Accepted → In Progress → Completed → Paid",
-    chips: ["Status history", "Pay after fix", "Customer only"], status: "Live", access: "Customer",
+    id: "fridge",
+    label: "Fridge repair",
+    when: "Yesterday",
+    device: "Double-door fridge",
+    problem: "Fridge not cooling",
+    area: "Gulshan, Dhaka",
+    technician: "Karim Ahmed",
+    status: "Waiting for technician",
+    next: "You'll be notified as soon as a technician accepts.",
+    price: 2500,
+    steps: ["Request sent", "Technician accepted", "Repair started", "Ready to pay"],
+    completedSteps: 1,
   },
   {
-    id: "requests", hash: "/requests", label: "Requests", route: "/dashboard/technician/requests",
-    title: "Manage incoming requests",
-    subtitle: "Accept, reject, start work and set the final amount",
-    chips: ["Owner scoped", "Final amount", "Technician"], status: "Live", access: "Technician",
-  },
-  {
-    id: "news", hash: "/news", label: "Updates", route: "/about#stories",
-    title: "What is new at FixMate",
-    subtitle: "New service categories, technician stories and platform updates",
-    chips: ["News", "Community", "Changelog"], status: "Live", access: "Everyone",
-  },
-  {
-    id: "admin", hash: "/admin", label: "Admin", route: "/dashboard/admin",
-    title: "Moderate the whole platform",
-    subtitle: "Users, service approvals, all jobs and Stripe revenue",
-    chips: ["Approvals", "Roles", "Revenue"], status: "Live", access: "Admin",
-  },
-  {
-    id: "profile", hash: "/profile", label: "Profile", route: "/dashboard/profile",
-    title: "Keep your profile current",
-    subtitle: "Name, phone, area, bio and a photo uploaded through ImgBB",
-    chips: ["ImgBB upload", "All roles", "Read-only email"], status: "Live", access: "Signed in",
-  },
-  {
-    id: "contact", hash: "/contact", label: "Contact", route: "/about#trust",
-    title: "Talk to the FixMate team",
-    subtitle: "hello@fixmate.test · +880 1711 000 000 · Dhaka",
-    chips: ["Email", "Phone", "Dhaka"], status: "Live", access: "Everyone",
-  },
-  {
-    id: "stories", hash: "/stories", label: "Stories", route: "/about#stories",
-    title: "Repairs people can trust",
-    subtitle: "Customer, technician and admin stories from FixMate",
-    chips: ["Testimonials", "Trust", "Community"], status: "Live", access: "Everyone",
+    id: "laptop",
+    label: "Laptop cleaning",
+    when: "Last week",
+    device: "HP Pavilion",
+    problem: "Laptop running hot",
+    area: "Dhanmondi, Dhaka",
+    technician: "Rahim Uddin",
+    status: "Ready to pay",
+    next: "Your repair is complete. Pay securely whenever you're ready.",
+    price: 1800,
+    steps: ["Request sent", "Technician accepted", "Repair started", "Ready to pay"],
+    completedSteps: 4,
   },
 ];
 
-const assetGroups = [
-  { id: "search", label: "Search", icon: "⌕", items: previewPages.map((page) => page.label) },
-  { id: "layers", label: "Status Layers", icon: "▤", items: ["Requested", "Accepted", "In Progress", "Completed", "Paid"] },
-  { id: "components", label: "UI Components", icon: "▦", items: ["iPhone Screen", "AC Servicing", "Laptop Care", "Fridge Repair"] },
-  { id: "styles", label: "Styles", icon: "◫", items: ["Status badges", "Role badges", "Price tags", "Empty states"] },
-] as const;
-
-const agentCopy: Record<string, { prompt: string; statuses: string[] }> = {
-  home: {
-    prompt: "Write a short introduction for a repair platform where customers can track every job.",
-    statuses: ["Checking the headline…", "Tightening the sub-deck…", "Auto-saving hero copy…"],
-  },
-  services: {
-    prompt: "Show the newest approved repair services with equal-height cards and a clear price.",
-    statuses: ["Sorting by newest…", "Applying approval rules…", "Aligning service cards…"],
-  },
-  work: {
-    prompt: "Add a live status tracker so customers can see each step of their repair job.",
-    statuses: ["Mapping status history…", "Adding the payment gate…", "Auto-saving tracker…"],
-  },
-  news: {
-    prompt: "Share FixMate platform updates, technician stories and new service categories.",
-    statuses: ["Collecting updates…", "Formatting the story…", "Auto-saving update…"],
-  },
-  requests: {
-    prompt: "Prepare the request table with owner-scoped actions for the logged-in technician.",
-    statuses: ["Checking ownership rules…", "Adding valid transitions…", "Auto-saving table…"],
-  },
-  admin: {
-    prompt: "Summarize pending service approvals and Stripe revenue for the admin overview.",
-    statuses: ["Reading approval queue…", "Totaling transactions…", "Auto-saving overview…"],
-  },
-  profile: {
-    prompt: "Keep name, phone, area and bio editable while email and role stay read-only.",
-    statuses: ["Checking profile fields…", "Preparing ImgBB upload…", "Auto-saving profile…"],
-  },
-  contact: { prompt: "Add clear contact details for customers across Dhaka.", statuses: ["Checking contact info…", "Formatting details…", "Auto-saving page…"] },
-  stories: { prompt: "Write three short FixMate stories from a customer, technician and admin view.", statuses: ["Collecting stories…", "Matching voice…", "Auto-saving stories…"] },
-};
+const nextSteps = [
+  "A verified technician reviews your request",
+  "You follow every update in one place",
+  "You pay only after the repair is complete",
+];
 
 export const Hero = () => {
   const router = useRouter();
   const heroRef = useRef<HTMLElement>(null);
   const [query, setQuery] = useState("");
-  const [pages, setPages] = useState<PreviewPage[]>(previewPages);
-  const [activePageId, setActivePageId] = useState("home");
-  const [activeAssetId, setActiveAssetId] = useState<(typeof assetGroups)[number]["id"]>("search");
-  const [assetQuery, setAssetQuery] = useState("");
-  const [statusIndex, setStatusIndex] = useState(0);
+  const [activeId, setActiveId] = useState("phone");
 
-  const activePage = pages.find((page) => page.id === activePageId) ?? pages[0];
-  const agent = agentCopy[activePage.id] ?? agentCopy.home;
-  const activeGroup = assetGroups.find((group) => group.id === activeAssetId) ?? assetGroups[0];
-  const assetItems = useMemo(
-    () => activeGroup.items.filter((item) => item.toLowerCase().includes(assetQuery.trim().toLowerCase())),
-    [activeGroup, assetQuery],
-  );
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setStatusIndex((index) => index + 1), 2600);
-    return () => window.clearInterval(timer);
-  }, []);
+  const active = repairExamples.find((item) => item.id === activeId) ?? repairExamples[0];
 
   useEffect(() => {
     const onScroll = () => {
@@ -152,28 +109,10 @@ export const Hero = () => {
     router.push(value ? `/services?q=${encodeURIComponent(value)}` : "/services");
   };
 
-  const addPage = () => {
-    setPages((current) => {
-      if (current.length >= 12) return current;
-      const number = current.filter((page) => page.id.startsWith("custom-")).length + 1;
-      const page: PreviewPage = {
-        id: `custom-${number}`,
-        hash: `/repair-${number}`,
-        label: `Repair Page ${number}`,
-        route: "/services",
-        title: `Repair Page ${number}`,
-        subtitle: "A new FixMate page ready to be edited",
-        chips: ["Draft", "Editable", "New"], status: "Draft", access: "Editor",
-      };
-      setActivePageId(page.id);
-      return [...current, page];
-    });
-  };
-
   return (
     <header className="cl-hero cl-grain" ref={heroRef}>
-      <Link className="cl-hero-pill" href="/about#stories">
-        <span className="dot">New</span> Trusted by Dhaka technicians <span aria-hidden="true">→</span>
+      <Link className="cl-hero-pill" href="/about">
+        <span className="dot">New</span> Trusted technicians across Dhaka <span aria-hidden="true">→</span>
       </Link>
 
       <h1>
@@ -181,7 +120,7 @@ export const Hero = () => {
         <span className="grad">Fixed.</span>
       </h1>
       <p className="cl-hero-sub">
-        Describe the problem — FixMate matches you with verified technicians, keeps every step visible, and lets you pay only after the repair is done.
+        Describe the problem — FixMate matches you with a verified technician, keeps every step visible, and lets you pay only after the repair is done.
       </p>
 
       <form className="cl-hero-search" onSubmit={onSearch} role="search">
@@ -201,102 +140,76 @@ export const Hero = () => {
         <Link href="/about" className="cl-btn cl-btn-ghost cl-btn-lg">How it works <span aria-hidden="true">→</span></Link>
       </div>
 
-      <div className="cl-app-window" role="group" aria-label="FixMate operations preview">
+      <div className="cl-app-window" role="group" aria-label="See how FixMate tracks a repair">
         <div className="cl-win-titlebar">
           <div className="cl-traffic"><i className="cl-t-r" /><i className="cl-t-y" /><i className="cl-t-g" /></div>
-          <div className="cl-doc-name">FixMate Ops <span className="badge">· live</span><span className="badge">Repair Console</span></div>
+          <div className="cl-doc-name">FixMate Repair Tracker <span className="badge">Live updates</span></div>
           <div className="cl-win-right">
-            <div className="cl-avatars"><span className="cl-a1">AR</span><span className="cl-a2">MT</span><span className="cl-a3">AD</span></div>
-            <button className="cl-mini-btn" type="button" onClick={() => router.push(activePage.route)}>Open page</button>
+            <Link className="cl-mini-btn" href="/dashboard/customer/bookings">View my repairs</Link>
           </div>
         </div>
 
         <aside className="cl-sidebar">
-          <div className="cl-side-label">Pages <button type="button" onClick={addPage} aria-label="Add preview page">+</button></div>
-          {pages.map((page) => (
+          <div className="cl-side-label">Your repairs</div>
+          {repairExamples.map((example) => (
             <button
-              key={page.id}
+              key={example.id}
               type="button"
-              className={`cl-side-item${page.id === activePageId ? " active" : ""}`}
-              onClick={() => {
-                setActivePageId(page.id);
-                setStatusIndex(0);
-              }}
-              aria-label={`Open ${page.label} page in preview`}
+              className={`cl-side-item${example.id === activeId ? " active" : ""}`}
+              onClick={() => setActiveId(example.id)}
+              aria-label={`View ${example.label} repair`}
             >
-              <span className="hash">{page.hash}</span> {page.label}
+              <span className="hash">{example.when}</span> {example.label}
             </button>
           ))}
-
-          <div className="cl-side-label">Assets</div>
-          <div className="cl-side-search"><span aria-hidden="true">⌕</span><input value={assetQuery} onChange={(event) => setAssetQuery(event.target.value)} placeholder={`Search ${activeGroup.label.toLowerCase()}…`} aria-label={`Search ${activeGroup.label}`} /></div>
+          <div className="cl-side-label">Why FixMate</div>
           <div className="cl-asset-list">
-            {assetGroups.map((group) => (
-              <button
-                key={group.id}
-                type="button"
-                className={`cl-side-item${group.id === activeAssetId ? " active" : ""}`}
-                onClick={() => {
-                  setActiveAssetId(group.id);
-                  setAssetQuery("");
-                }}
-                aria-label={`Show ${group.label} assets`}
-              >
-                <span aria-hidden="true">{group.icon}</span> {group.label}
-              </button>
-            ))}
+            <span className="cl-side-item">✓ Verified technicians</span>
+            <span className="cl-side-item">✓ Clear prices</span>
+            <span className="cl-side-item">✓ Pay after the fix</span>
           </div>
-          {assetItems.length ? (
-            <div className="cl-asset-list" style={{ marginTop: 6, paddingLeft: 8 }}>
-              {assetItems.map((item) => (
-                <span className="cl-side-item" key={item} style={{ cursor: "default" }}>· {item}</span>
-              ))}
-            </div>
-          ) : (
-            <div className="cl-side-empty">No matching {activeGroup.label.toLowerCase()}.</div>
-          )}
         </aside>
 
         <div className="cl-canvas-area">
           <div className="cl-canvas-grid" />
-          <div className="cl-canvas-card">
+          <div className="cl-canvas-card" aria-live="polite">
             <div className="cl-canvas-hero">
-              <h4>{activePage.title}</h4>
-              <p>{activePage.subtitle}</p>
+              <span className="cl-chip cl-tracker-status">{active.status}</span>
+              <h4>{active.problem}</h4>
+              <p>{active.device} · {active.area}</p>
             </div>
-            <div className="cl-canvas-body">
-              {activePage.chips.map((chip) => <span className="cl-chip" key={chip}>{chip}</span>)}
-              <span className="cl-chip" style={{ color: "var(--blue)", borderColor: "var(--blue-line)" }}>● Auto-saved</span>
-            </div>
-          </div>
-
-          <div className="cl-agent-pop">
-            <div className="cl-ap-head">
-              <div className="cl-ap-title"><span className="cl-agent-star">✦</span> FixMate Assistant <span style={{ color: "var(--smoke)", fontWeight: 400 }}>— {activePage.label}</span></div>
-              <span className="cl-model-tag">Rules v2</span>
-            </div>
-            <div className="cl-ap-prompt">{agent.prompt}</div>
-            <div className="cl-ap-status">
-              <span className="cl-typing" aria-hidden="true"><i /><i /><i /></span>
-              <span>{agent.statuses[statusIndex % agent.statuses.length]}</span>
+            <div className="cl-canvas-body cl-tracker-body">
+              <div className="cl-tracker-steps">
+                {active.steps.map((step, index) => (
+                  <span
+                    className={`cl-tracker-step${index < active.completedSteps ? " done" : ""}${index === active.completedSteps - 1 ? " current" : ""}`}
+                    key={step}
+                  >
+                    <i aria-hidden="true">{index < active.completedSteps ? "✓" : index + 1}</i>
+                    {step}
+                  </span>
+                ))}
+              </div>
+              <p className="cl-tracker-note">{active.next}</p>
+              <div className="cl-tracker-foot">
+                <span>Technician <b>{active.technician}</b></span>
+                <span>Starting price <b>{money(active.price)}</b></span>
+              </div>
             </div>
           </div>
         </div>
 
         <aside className="cl-props">
-          <div className="cl-side-label" style={{ marginTop: 0 }}>Inspector</div>
-          {[
-            ["Page", activePage.label],
-            ["Route", activePage.hash],
-            ["Access", activePage.access],
-            ["SLA", "24h response"],
-            ["Status", activePage.status],
-            ["Theme", "Dark"],
-          ].map(([label, value], index) => (
-            <div className="cl-prop-row" key={label}>
-              <b>{label}</b><span className={`cl-prop-val${index === 4 ? " hl" : ""}`}>{value}</span>
+          <div className="cl-side-label" style={{ marginTop: 0 }}>What happens next</div>
+          {nextSteps.map((step, index) => (
+            <div className="cl-prop-row cl-next-row" key={step}>
+              <b>{index + 1}</b><span className="cl-prop-val">{step}</span>
             </div>
           ))}
+          <div className="cl-side-label" style={{ marginTop: 18 }}>Need a hand?</div>
+          <div className="cl-prop-row cl-next-row">
+            <span className="cl-prop-val">Message the FixMate team from your dashboard.</span>
+          </div>
         </aside>
       </div>
     </header>

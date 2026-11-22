@@ -1,5 +1,11 @@
-export const money = (amount: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
+export const money = (amount: number) => {
+  const maximumFractionDigits = Number.isInteger(amount) ? 0 : 2;
+  const formatted = new Intl.NumberFormat("en-BD", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits,
+  }).format(amount);
+  return `৳${formatted}`;
+};
 
 export const shortDate = (value: string | Date) =>
   new Intl.DateTimeFormat("en-US", { day: "numeric", month: "short", year: "numeric" }).format(

@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { money, relativeDate, shortDate, truncate } from "./format";
 
 describe("format helpers", () => {
-  it("formats money as USD", () => {
-    expect(money(85)).toBe("$85.00");
-    expect(money(85.5)).toBe("$85.50");
+  it("formats money as BDT with the taka symbol", () => {
+    expect(money(8500)).toBe("৳8,500");
+    expect(money(8500.5)).toBe("৳8,500.5");
   });
 
   it("formats dates consistently", () => {

@@ -11,7 +11,7 @@ export default function AdminTransactionsPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Admin dashboard" title="Transactions" subtitle="Every payment recorded by Stripe." />
+      <PageHeader eyebrow="Admin dashboard" title="Transactions" subtitle="Every completed repair payment, recorded in BDT." />
       <div style={{ marginBottom: 22, maxWidth: 300 }}>
         <div className="fm-stat"><div className="fm-stat-label">Total revenue</div><div className="fm-stat-value">{money(data?.revenue ?? 0)}</div></div>
       </div>

@@ -18,10 +18,10 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
       <main style={{ minHeight: "calc(100vh - 66px)", display: "grid", placeItems: "center", padding: 24 }}>
         <div style={{ textAlign: "center", maxWidth: 500 }}>
           <AlertTriangle size={54} color="#a9680a" style={{ margin: "0 auto 20px" }} />
-          <span className="fm-eyebrow">Something broke</span>
+          <span className="fm-eyebrow">Something went wrong</span>
           <h1 className="fm-h2" style={{ fontSize: 42, marginTop: 12 }}>We couldn&apos;t load this page.</h1>
           <p className="fm-lead" style={{ margin: "14px auto 28px" }}>
-            An unexpected error occurred. Try again — your session and data are safe.
+            We couldn’t load this page. Please try again in a moment.
           </p>
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="fm-btn fm-btn-primary" onClick={reset}>Try again</button>

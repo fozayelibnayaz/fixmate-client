@@ -28,7 +28,7 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
     { icon: <Clock3 size={17} />, label: "Estimated duration", value: service.estimatedDuration },
     { icon: <Wrench size={17} />, label: "Service mode", value: service.serviceMode },
     { icon: <MapPin size={17} />, label: "Service area", value: service.serviceArea },
-    { icon: <ShieldCheck size={17} />, label: "Approval", value: "Admin approved" },
+    { icon: <ShieldCheck size={17} />, label: "Technician", value: "Verified" },
   ];
 
   return (
@@ -40,7 +40,15 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
         <div style={{ display: "grid", gridTemplateColumns: "1.05fr .95fr", gap: 52, alignItems: "start" }}>
           <div>
             <div className="fm-card" style={{ aspectRatio: "4 / 3" }}>
-              <img src={service.image} alt={service.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img
+                src={service.image || "/services/generic.svg"}
+                alt={service.title}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = "/services/generic.svg";
+                }}
+              />
             </div>
             <div className="fm-panel" style={{ marginTop: 18, padding: 22 }}>
               <span className="fm-eyebrow">Technician</span>
@@ -80,15 +88,15 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
                 onClick={handleRequest}
                 disabled={Boolean(user && !canRequest)}
               >
-                {!user ? "Sign in to request a repair" : canRequest ? "Request Repair" : "Only customers can request a repair"}
+                {!user ? "Sign in to request a repair" : canRequest ? "Request Repair" : "Customer account needed"}
               </button>
               {user && !canRequest ? (
                 <p className="fm-muted" style={{ fontSize: 12, margin: "12px 0 0", textAlign: "center" }}>
-                  Switch to a customer account to send repair requests.
+                  Create a customer account to book a repair.
                 </p>
               ) : null}
               <p className="fm-muted" style={{ fontSize: 12, margin: "12px 0 0", textAlign: "center" }}>
-                You only pay after the technician marks the job complete.
+                You only pay once your repair is complete.
               </p>
             </div>
           </div>

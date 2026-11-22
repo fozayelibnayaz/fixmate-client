@@ -58,7 +58,7 @@ export default function TechnicianRequestsPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Technician dashboard" title="Manage Requests" subtitle="Accept, reject and move jobs through the pipeline." />
+      <PageHeader eyebrow="Technician dashboard" title="Manage Requests" subtitle="Accept requests, start work and confirm when a repair is complete." />
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
         {filters.map((value) => (
           <button
@@ -124,7 +124,7 @@ export default function TechnicianRequestsPage() {
       <Modal open={Boolean(completing)} onClose={() => setCompleting(null)} title="Mark job complete" description="Set the final amount the customer will pay.">
         <form onSubmit={complete}>
           <Field
-            label="Final amount (USD)"
+            label="Final amount (BDT)"
             type="number"
             step="0.01"
             min="0.01"

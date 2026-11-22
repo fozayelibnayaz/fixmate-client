@@ -1,12 +1,24 @@
+"use client";
+
 import { ArrowUpRight, Clock3, MapPin } from "lucide-react";
 import Link from "next/link";
 import { money } from "@/lib/format";
 import type { Service } from "@/lib/types";
 
+const fallbackImage = "/services/generic.svg";
+
 export const ServiceCard = ({ service }: { service: Service }) => (
   <article className="fm-card fm-service-card">
     <Link href={`/services/${service._id}`} className="fm-media" aria-label={`View ${service.title}`}>
-      <img src={service.image} alt={service.title} loading="lazy" />
+      <img
+        src={service.image || fallbackImage}
+        alt={service.title}
+        loading="lazy"
+        onError={(event) => {
+          event.currentTarget.onerror = null;
+          event.currentTarget.src = fallbackImage;
+        }}
+      />
     </Link>
     <div className="fm-service-body">
       <span className="fm-pill" style={{ alignSelf: "flex-start" }}>{service.category}</span>

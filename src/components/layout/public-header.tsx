@@ -100,7 +100,7 @@ export const PublicHeader = () => {
                   <div className="cl-account-menu">
                     <div style={{ padding: "8px 10px 12px", borderBottom: "1px solid var(--ring)" }}>
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{user.name}</div>
-                      <span className="cl-status" style={{ display: "inline-block", marginTop: 8, textTransform: "capitalize" }}>{user.role}</span>
+                      <span className="cl-status" style={{ display: "inline-block", marginTop: 8 }}>{user.role.charAt(0).toUpperCase() + user.role.slice(1)}</span>
                     </div>
                     <Link href={DASHBOARD_HOME[user.role]} style={{ display: "flex", alignItems: "center", gap: 10, padding: 10, borderRadius: 8, fontSize: 14 }}>
                       <LayoutDashboard size={15} aria-hidden="true" /> Dashboard

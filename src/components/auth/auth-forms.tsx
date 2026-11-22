@@ -67,7 +67,7 @@ export const SignUpForm = ({ initialRole }: { initialRole: "customer" | "technic
     <AuthShell
       eyebrow="Get started"
       title="Create your account."
-      subtitle="Choose how you'll use FixMate. Admin accounts are created manually."
+      subtitle="Choose how you'll use FixMate."
       footer={<>Already have an account? <Link href="/sign-in" style={{ color: "var(--fm-blue)", fontWeight: 650 }}>Sign in</Link></>}
     >
       <form onSubmit={submit}>

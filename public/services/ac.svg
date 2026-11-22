@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Air conditioner service">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b2530"/><stop offset="1" stop-color="#07151d"/></linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#ffffff" stroke-opacity=".05" stroke-width="1"/></pattern>
+  </defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <rect width="900" height="600" fill="url(#grid)"/>
+  <circle cx="450" cy="272" r="175" fill="#0099ff" fill-opacity=".10"/>
+  <g stroke="#7dcbff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="282" y="150" width="336" height="122" rx="20"/>
+    <path d="M330 212h240"/>
+    <path d="M330 320c28-22 52-22 80 0s52 22 80 0 52-22 80 0"/>
+    <path d="M330 380c28-22 52-22 80 0s52 22 80 0 52-22 80 0"/>
+  </g>
+  <text x="450" y="520" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">AC Service</text>
+</svg>

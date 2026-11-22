@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Laptop repair">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#172036"/><stop offset="1" stop-color="#0a1020"/></linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#ffffff" stroke-opacity=".05" stroke-width="1"/></pattern>
+  </defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <rect width="900" height="600" fill="url(#grid)"/>
+  <circle cx="450" cy="272" r="175" fill="#0099ff" fill-opacity=".10"/>
+  <g stroke="#7dcbff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="310" y="158" width="280" height="190" rx="16"/>
+    <path d="M275 374h350l-30 40H305z"/>
+    <path d="M410 374h80"/>
+  </g>
+  <text x="450" y="520" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">Laptop &amp; PC</text>
+</svg>

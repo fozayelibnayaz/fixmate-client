@@ -73,7 +73,7 @@ export const ServiceForm = ({
       </div>
       <TextareaField label="Description" placeholder="What does this service include?" error={errors.description?.message} {...register("description")} />
       <div className="fm-grid fm-grid-2" style={{ gap: 0, columnGap: 16 }}>
-        <Field label="Base price (USD)" type="number" step="0.01" min="1" error={errors.basePrice?.message} {...register("basePrice", { valueAsNumber: true })} />
+        <Field label="Starting price (BDT)" type="number" step="1" min="1" error={errors.basePrice?.message} {...register("basePrice", { valueAsNumber: true })} />
         <Field label="Estimated duration" placeholder="e.g. 2-3 hours" error={errors.estimatedDuration?.message} {...register("estimatedDuration")} />
       </div>
       <div className="fm-grid fm-grid-2" style={{ gap: 0, columnGap: 16 }}>
@@ -86,7 +86,7 @@ export const ServiceForm = ({
         <label className="fm-card" style={{ padding: 22, display: "grid", placeItems: "center", gap: 10, cursor: "pointer", minHeight: 170 }}>
           {uploading ? <Loader2 size={28} className="fm-muted" /> : <ImagePlus size={28} color="var(--fm-blue)" />}
           <span style={{ fontSize: 13, fontWeight: 650 }}>{uploading ? "Uploading…" : "Click to upload a photo"}</span>
-          <span className="fm-muted" style={{ fontSize: 12 }}>PNG or JPG · uploaded securely to ImgBB</span>
+          <span className="fm-muted" style={{ fontSize: 12 }}>PNG or JPG · uploaded securely</span>
           <input type="file" accept="image/*" hidden onChange={(event) => handleFile(event.target.files?.[0])} />
         </label>
         {image ? <img src={image} alt="Preview" style={{ width: "100%", maxHeight: 220, objectFit: "cover", borderRadius: 14, marginTop: 12 }} /> : null}

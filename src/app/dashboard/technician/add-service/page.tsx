@@ -16,13 +16,13 @@ export default function AddServicePage() {
 
   const submit = async (values: ServiceValues) => {
     await post<{ service: Service }>("/api/services", values);
-    toast.success("Service submitted — it's waiting for admin approval");
+    toast.success("Service submitted for review");
     router.push("/dashboard/technician/my-services");
   };
 
   return (
     <>
-      <PageHeader eyebrow="Technician dashboard" title="Add a service" subtitle="New listings go to pending until an admin approves them." />
+      <PageHeader eyebrow="Technician dashboard" title="Add a service" subtitle="New listings are reviewed before they appear in the catalogue." />
       <div className="fm-panel" style={{ padding: 28, maxWidth: 820 }}>
         <div className="fm-grid fm-grid-2" style={{ gap: 0, columnGap: 16, marginBottom: 18 }}>
           <Field label="Technician name" value={user?.name ?? ""} readOnly />

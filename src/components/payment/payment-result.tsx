@@ -4,7 +4,7 @@ import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
-import { money, truncate } from "@/lib/format";
+import { money } from "@/lib/format";
 import type { Payment } from "@/lib/types";
 import { useRequireAuth } from "@/hooks/use-auth";
 import { Spinner } from "@/components/ui/misc";
@@ -43,14 +43,14 @@ export const PaymentSuccess = ({ sessionId }: { sessionId: string }) => {
           <>
             <AlertTriangle size={52} color="#d92d20" style={{ margin: "0 auto 18px" }} />
             <h1 className="fm-h2" style={{ fontSize: 40 }}>Couldn&apos;t verify payment</h1>
-            <p className="fm-lead" style={{ marginInline: "auto" }}>We couldn&apos;t reach Stripe. Check My Bookings — the payment may still have been recorded.</p>
+            <p className="fm-lead" style={{ marginInline: "auto" }}>We couldn’t confirm your payment right now. Check My Bookings — your payment may still have gone through.</p>
           </>
         ) : null}
         {state === "pending" ? (
           <>
             <Loader2 size={52} color="var(--fm-blue)" style={{ margin: "0 auto 18px" }} />
             <h1 className="fm-h2" style={{ fontSize: 40 }}>Payment not completed</h1>
-            <p className="fm-lead" style={{ marginInline: "auto" }}>Stripe hasn&apos;t confirmed this session yet. Try again from My Bookings.</p>
+            <p className="fm-lead" style={{ marginInline: "auto" }}>Your payment hasn’t been confirmed yet. Please try again from My Bookings.</p>
           </>
         ) : null}
         {state === "paid" && payment ? (
@@ -62,7 +62,7 @@ export const PaymentSuccess = ({ sessionId }: { sessionId: string }) => {
             </p>
             <div className="fm-panel" style={{ marginTop: 28, padding: 24, textAlign: "left" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span className="fm-muted">Amount</span><strong>{money(payment.amount)}</strong></div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span className="fm-muted">Transaction</span><strong title={payment.transactionId}>{truncate(payment.transactionId, 24)}</strong></div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span className="fm-muted">Status</span><strong>Paid in full</strong></div>
               <div style={{ display: "flex", justifyContent: "space-between" }}><span className="fm-muted">Date</span><strong>{new Date(payment.paidAt).toLocaleDateString()}</strong></div>
             </div>
           </>
@@ -84,7 +84,7 @@ export const PaymentCancel = () => {
         <AlertTriangle size={52} color="#a9680a" style={{ margin: "0 auto 18px" }} />
         <h1 className="fm-h2" style={{ fontSize: 42 }}>Payment cancelled</h1>
         <p className="fm-lead" style={{ marginInline: "auto" }}>
-          Nothing was charged and your booking is still marked completed. You can try again whenever you&apos;re ready.
+          Nothing was charged, and your repair is still shown as complete. You can try again whenever you’re ready.
         </p>
         <Link href="/dashboard/customer/bookings" className="fm-btn fm-btn-primary" style={{ marginTop: 28 }}>Try Again</Link>
       </div>

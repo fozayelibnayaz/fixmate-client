@@ -16,7 +16,7 @@ export default function NotFound() {
               <Wrench size={56} color="var(--fm-blue)" style={{ transform: "rotate(-35deg)" }} />
             </div>
           </div>
-          <span className="fm-eyebrow">Error 404</span>
+          <span className="fm-eyebrow">Page not found</span>
           <h1 className="fm-display" style={{ fontSize: "clamp(60px, 12vw, 120px)", margin: "10px 0" }}>404</h1>
           <h2 className="fm-h3">This page needs a fix.</h2>
           <p className="fm-lead" style={{ margin: "14px auto 28px" }}>

@@ -8,12 +8,6 @@ const XLogo = () => (
   </svg>
 );
 
-const LinkedInLogo = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zM9 9h3.8v1.7h.05A4.2 4.2 0 0116 8.6c4 0 4.7 2.6 4.7 6V21h-4v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V21H9z" />
-  </svg>
-);
-
 export const PublicFooter = () => (
   <footer className="cl-footer">
     <div className="cl-container">
@@ -28,12 +22,11 @@ export const PublicFooter = () => (
           </p>
           <div className="cl-footer-socials">
             <a href="https://x.com" aria-label="FixMate on X" target="_blank" rel="noreferrer"><XLogo /></a>
-            <a href="https://www.linkedin.com" aria-label="FixMate on LinkedIn" target="_blank" rel="noreferrer"><LinkedInLogo /></a>
-            <a href="mailto:hello@fixmate.test" aria-label="Email FixMate"><Mail size={15} /></a>
+            <a href="mailto:hello@fixmate.com" aria-label="Email FixMate"><Mail size={15} /></a>
           </div>
           <div style={{ display: "grid", gap: 8, fontSize: 13, color: "var(--smoke)", marginTop: 18 }}>
-            <span style={{ display: "flex", gap: 10, alignItems: "center" }}><Mail size={14} /> hello@fixmate.test</span>
-            <span style={{ display: "flex", gap: 10, alignItems: "center" }}><Phone size={14} /> +880 1711 000 000</span>
+            <span style={{ display: "flex", gap: 10, alignItems: "center" }}><Mail size={14} /> hello@fixmate.com</span>
+            <span style={{ display: "flex", gap: 10, alignItems: "center" }}><Phone size={14} /> +880 1711 234 567</span>
             <span style={{ display: "flex", gap: 10, alignItems: "center" }}><MapPin size={14} /> Dhaka, Bangladesh</span>
           </div>
         </div>
@@ -57,7 +50,7 @@ export const PublicFooter = () => (
           <Link href="/services">Find a technician</Link>
           <Link href="/dashboard/customer/bookings">Track my repair</Link>
           <Link href="/dashboard/customer/payments">Payment history</Link>
-          <Link href="/payment/cancel">Payment help</Link>
+          <Link href="/about">Repair questions</Link>
         </div>
         <div>
           <h6>For technicians</h6>

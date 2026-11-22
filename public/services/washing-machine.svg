@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Washing machine repair">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d2033"/><stop offset="1" stop-color="#07131f"/></linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#ffffff" stroke-opacity=".05" stroke-width="1"/></pattern>
+  </defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <rect width="900" height="600" fill="url(#grid)"/>
+  <circle cx="450" cy="272" r="175" fill="#0099ff" fill-opacity=".10"/>
+  <g stroke="#7dcbff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="330" y="120" width="240" height="340" rx="24"/>
+    <path d="M365 185h95"/>
+    <circle cx="450" cy="320" r="92"/>
+    <circle cx="450" cy="320" r="54"/>
+  </g>
+  <text x="450" y="520" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">Washing Machine</text>
+</svg>

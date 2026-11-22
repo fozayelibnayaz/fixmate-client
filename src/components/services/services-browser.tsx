@@ -65,7 +65,7 @@ export const ServicesBrowser = ({ initial }: { initial: BrowseParams }) => {
       .catch(() => {
         if (active) {
           setResult({ services: [], total: 0, page: 1, limit: 9, totalPages: 1 });
-          setError("Make sure the FixMate API on port 4000 and MongoDB are running, then seed the demo data.");
+          setError("We couldn’t load services right now. Please try again in a moment.");
         }
       })
       .finally(() => {
@@ -83,7 +83,7 @@ export const ServicesBrowser = ({ initial }: { initial: BrowseParams }) => {
       <div className="fm-container">
         <span className="fm-eyebrow">Browse the catalogue</span>
         <h1 className="fm-h2" style={{ marginTop: 16 }}>Find your <span className="fm-gradient-text">fix</span>.</h1>
-        <p className="fm-lead">Approved services from verified technicians. Search, filter and sort — all handled on the server.</p>
+        <p className="fm-lead">Trusted local repairs from verified technicians. Search, filter and book in a few taps.</p>
 
         <div className="fm-panel cl-filter-panel" style={{ marginTop: 38, padding: 18 }}>
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12 }}>

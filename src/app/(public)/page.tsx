@@ -1,16 +1,15 @@
 import { Hero } from "@/components/home/hero";
 import {
-  AgentSection,
-  ApiSection,
-  CmsSection,
-  CodeSection,
+  FaqSection,
   FinalCta,
+  HowItWorksSection,
   MarketplaceSection,
   Marquee,
-  PlatformBento,
   ScrollEffects,
   ShowcaseSection,
+  StatusSection,
   StoriesSection,
+  TrustSection,
 } from "@/components/home/sections";
 
 export default function HomePage() {
@@ -19,14 +18,13 @@ export default function HomePage() {
       <ScrollEffects />
       <Hero />
       <Marquee />
-      <AgentSection />
-      <CmsSection />
-      <CodeSection />
-      <ApiSection />
-      <PlatformBento />
+      <HowItWorksSection />
+      <TrustSection />
+      <StatusSection />
       <ShowcaseSection />
       <StoriesSection />
       <MarketplaceSection />
+      <FaqSection />
       <FinalCta />
     </>
   );
