@@ -42,28 +42,28 @@ export const PaymentSuccess = ({ sessionId }: { sessionId: string }) => {
         {state === "error" ? (
           <>
             <AlertTriangle size={52} color="#d92d20" style={{ margin: "0 auto 18px" }} />
-            <h1 className="fm-h2" style={{ fontSize: 40 }}>Couldn&apos;t verify payment</h1>
+            <h1 className="fm-h2" style={{ fontSize: "clamp(28px, 8vw, 40px)" }}>Couldn&apos;t verify payment</h1>
             <p className="fm-lead" style={{ marginInline: "auto" }}>We couldn’t confirm your payment right now. Check My Bookings — your payment may still have gone through.</p>
           </>
         ) : null}
         {state === "pending" ? (
           <>
             <Loader2 size={52} color="var(--fm-blue)" style={{ margin: "0 auto 18px" }} />
-            <h1 className="fm-h2" style={{ fontSize: 40 }}>Payment not completed</h1>
+            <h1 className="fm-h2" style={{ fontSize: "clamp(28px, 8vw, 40px)" }}>Payment not completed</h1>
             <p className="fm-lead" style={{ marginInline: "auto" }}>Your payment hasn’t been confirmed yet. Please try again from My Bookings.</p>
           </>
         ) : null}
         {state === "paid" && payment ? (
           <>
             <CheckCircle2 size={58} color="#16824a" style={{ margin: "0 auto 18px" }} />
-            <h1 className="fm-h2" style={{ fontSize: 42 }}>Paid. Done. <span className="fm-gradient-text">Fixed.</span></h1>
+            <h1 className="fm-h2" style={{ fontSize: "clamp(28px, 8vw, 42px)" }}>Paid. Done. <span className="fm-gradient-text">Fixed.</span></h1>
             <p className="fm-lead" style={{ marginInline: "auto" }}>
               {payment.serviceTitle} with {payment.technicianName} is fully paid.
             </p>
             <div className="fm-panel" style={{ marginTop: 28, padding: 24, textAlign: "left" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span className="fm-muted">Amount</span><strong>{money(payment.amount)}</strong></div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span className="fm-muted">Status</span><strong>Paid in full</strong></div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}><span className="fm-muted">Date</span><strong>{new Date(payment.paidAt).toLocaleDateString()}</strong></div>
+              <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 6, marginBottom: 12 }}><span className="fm-muted">Amount</span><strong>{money(payment.amount)}</strong></div>
+              <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 6, marginBottom: 12 }}><span className="fm-muted">Status</span><strong>Paid in full</strong></div>
+              <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 6 }}><span className="fm-muted">Date</span><strong>{new Date(payment.paidAt).toLocaleDateString()}</strong></div>
             </div>
           </>
         ) : null}
@@ -82,7 +82,7 @@ export const PaymentCancel = () => {
     <section className="fm-section-sm">
       <div className="fm-narrow" style={{ textAlign: "center", maxWidth: 520 }}>
         <AlertTriangle size={52} color="#a9680a" style={{ margin: "0 auto 18px" }} />
-        <h1 className="fm-h2" style={{ fontSize: 42 }}>Payment cancelled</h1>
+        <h1 className="fm-h2" style={{ fontSize: "clamp(28px, 8vw, 42px)" }}>Payment cancelled</h1>
         <p className="fm-lead" style={{ marginInline: "auto" }}>
           Nothing was charged, and your repair is still shown as complete. You can try again whenever you’re ready.
         </p>

@@ -81,13 +81,13 @@ const categoryIcons: Record<string, string> = {
 };
 
 const categoryPrices: Record<string, number> = {
-  Smartphone: 2500,
-  "Laptop & PC": 1500,
-  AC: 2500,
-  Refrigerator: 2000,
-  TV: 5500,
-  "Washing Machine": 3500,
-  Electrical: 1500,
+  Smartphone: 2200,
+  "Laptop & PC": 1800,
+  AC: 3000,
+  Refrigerator: 2200,
+  TV: 7000,
+  "Washing Machine": 4500,
+  Electrical: 1800,
 };
 
 const faqs = [

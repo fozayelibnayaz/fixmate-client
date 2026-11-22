@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <div className="cl-root">
       <PublicHeader />
-      <main style={{ minHeight: "calc(100vh - 66px)", display: "grid", placeItems: "center", padding: 24 }}>
+      <main style={{ minHeight: "calc(100dvh - 64px)", display: "grid", placeItems: "center", padding: 24 }}>
         <div style={{ textAlign: "center", maxWidth: 520 }}>
           <div style={{ position: "relative", width: 160, height: 160, margin: "0 auto 30px" }}>
             <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px dashed var(--fm-line)", transform: "rotate(12deg)" }} />

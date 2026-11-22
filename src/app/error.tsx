@@ -15,7 +15,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   return (
     <div className="cl-root">
       <PublicHeader />
-      <main style={{ minHeight: "calc(100vh - 66px)", display: "grid", placeItems: "center", padding: 24 }}>
+      <main style={{ minHeight: "calc(100dvh - 64px)", display: "grid", placeItems: "center", padding: 24 }}>
         <div style={{ textAlign: "center", maxWidth: 500 }}>
           <AlertTriangle size={54} color="#a9680a" style={{ margin: "0 auto 20px" }} />
           <span className="fm-eyebrow">Something went wrong</span>

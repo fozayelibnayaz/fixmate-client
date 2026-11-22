@@ -59,7 +59,7 @@ export default function CustomerBookingsPage() {
             <article key={booking._id} style={{ padding: 22, borderBottom: "1px solid var(--fm-line)" }}>
               <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
                 <img src={booking.serviceImage} alt="" style={{ width: 92, height: 92, borderRadius: 12, objectFit: "cover" }} />
-                <div style={{ flex: 1, minWidth: 220 }}>
+                <div style={{ flex: 1, minWidth: "min(220px, 100%)" }}>
                   <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                     <h3 style={{ fontSize: 17, margin: 0 }}>{booking.serviceTitle}</h3>
                     <StatusBadge status={booking.status} />

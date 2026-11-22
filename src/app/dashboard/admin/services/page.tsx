@@ -53,9 +53,11 @@ export default function AdminServicesPage() {
             <tbody>
               {(data?.services ?? []).map((service) => (
                 <tr key={service._id}>
-                  <td style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <img src={service.image} alt="" style={{ width: 46, height: 46, borderRadius: 9, objectFit: "cover" }} />
-                    <div><strong>{service.title}</strong><div className="fm-muted" style={{ fontSize: 12 }}>{service.category}</div></div>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <img src={service.image} alt="" style={{ width: 46, height: 46, borderRadius: 9, objectFit: "cover" }} />
+                      <div><strong>{service.title}</strong><div className="fm-muted" style={{ fontSize: 12 }}>{service.category}</div></div>
+                    </div>
                   </td>
                   <td>{service.technicianName}</td>
                   <td>{money(service.basePrice)}</td>

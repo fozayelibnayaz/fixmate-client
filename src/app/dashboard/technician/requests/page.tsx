@@ -90,8 +90,8 @@ export default function TechnicianRequestsPage() {
                   </td>
                   <td>{shortDate(booking.preferredDate)}</td>
                   <td><StatusBadge status={booking.status} /> {booking.paymentStatus === "paid" ? <div style={{ marginTop: 6 }}><PaymentBadge paid /></div> : null}</td>
-                  <td className="fm-muted" style={{ maxWidth: 240 }} title={booking.problemDescription}>
-                    <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{booking.problemDescription}</div>
+                  <td className="fm-muted" style={{ maxWidth: 240, overflowWrap: "anywhere" }} title={booking.problemDescription}>
+                    <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{booking.problemDescription}</div>
                     <div style={{ fontSize: 12 }}>{booking.address}</div>
                   </td>
                   <td>

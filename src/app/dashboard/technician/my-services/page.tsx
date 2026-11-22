@@ -73,9 +73,11 @@ export default function MyServicesPage() {
             <tbody>
               {services.map((service) => (
                 <tr key={service._id}>
-                  <td style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <img src={service.image} alt="" style={{ width: 46, height: 46, borderRadius: 9, objectFit: "cover" }} />
-                    <strong>{service.title}</strong>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <img src={service.image} alt="" style={{ width: 46, height: 46, borderRadius: 9, objectFit: "cover" }} />
+                      <strong>{service.title}</strong>
+                    </div>
                   </td>
                   <td>{service.category}</td>
                   <td>{money(service.basePrice)}</td>

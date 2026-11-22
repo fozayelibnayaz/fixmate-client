@@ -28,7 +28,7 @@ const AuthShell = ({
   children: React.ReactNode;
   footer: React.ReactNode;
 }) => (
-  <section className="fm-section-sm" style={{ minHeight: "calc(100vh - 66px)" }}>
+  <section className="fm-section-sm" style={{ minHeight: "calc(100dvh - 64px)" }}>
     <div className="fm-narrow" style={{ maxWidth: 520 }}>
       <span className="fm-eyebrow">{eyebrow}</span>
       <h1 className="fm-h2" style={{ fontSize: "clamp(34px, 5vw, 54px)", margin: "14px 0 0" }}>{title}</h1>

@@ -31,6 +31,11 @@ export const PublicHeader = () => {
   const [progress, setProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // The session is restored after hydration. Rendering the signed-out header
+  // until then keeps server HTML and the first client render identical.
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -53,6 +58,8 @@ export const PublicHeader = () => {
     toast.success("Signed out successfully");
     router.push("/");
   };
+
+  const accountUser = mounted ? user : null;
 
   return (
     <>
@@ -77,7 +84,7 @@ export const PublicHeader = () => {
           </nav>
 
           <div className="cl-nav-actions">
-            {user ? (
+            {accountUser ? (
               <div style={{ position: "relative" }}>
                 <button
                   onClick={() => setDropdownOpen((open) => !open)}
@@ -86,23 +93,23 @@ export const PublicHeader = () => {
                   aria-label="Account menu"
                   style={{ padding: "7px 14px" }}
                 >
-                  {user.image ? (
-                    <img src={user.image} alt="" style={{ width: 24, height: 24, borderRadius: "50%", objectFit: "cover" }} />
+                  {accountUser.image ? (
+                    <img src={accountUser.image} alt="" style={{ width: 24, height: 24, borderRadius: "50%", objectFit: "cover" }} />
                   ) : (
                     <span style={{ width: 24, height: 24, borderRadius: "50%", background: "#8ecae6", color: "#000", display: "grid", placeItems: "center", fontSize: 10, fontWeight: 700 }}>
-                      {user.name.charAt(0)}
+                      {accountUser.name.charAt(0)}
                     </span>
                   )}
-                  <span style={{ maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis" }}>{user.name.split(" ")[0]}</span>
+                  <span style={{ maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis" }}>{accountUser.name.split(" ")[0]}</span>
                   <ChevronDown size={13} aria-hidden="true" />
                 </button>
                 {dropdownOpen ? (
                   <div className="cl-account-menu">
                     <div style={{ padding: "8px 10px 12px", borderBottom: "1px solid var(--ring)" }}>
-                      <div style={{ fontWeight: 700, fontSize: 14 }}>{user.name}</div>
-                      <span className="cl-status" style={{ display: "inline-block", marginTop: 8 }}>{user.role.charAt(0).toUpperCase() + user.role.slice(1)}</span>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>{accountUser.name}</div>
+                      <span className="cl-status" style={{ display: "inline-block", marginTop: 8 }}>{accountUser.role.charAt(0).toUpperCase() + accountUser.role.slice(1)}</span>
                     </div>
-                    <Link href={DASHBOARD_HOME[user.role]} style={{ display: "flex", alignItems: "center", gap: 10, padding: 10, borderRadius: 8, fontSize: 14 }}>
+                    <Link href={DASHBOARD_HOME[accountUser.role]} style={{ display: "flex", alignItems: "center", gap: 10, padding: 10, borderRadius: 8, fontSize: 14 }}>
                       <LayoutDashboard size={15} aria-hidden="true" /> Dashboard
                     </Link>
                     <Link href="/dashboard/profile" style={{ display: "flex", alignItems: "center", gap: 10, padding: 10, borderRadius: 8, fontSize: 14 }}>
@@ -137,14 +144,14 @@ export const PublicHeader = () => {
         {links.map((link) => (
           <Link key={link.href} href={link.href}>{link.label}</Link>
         ))}
-        {!user ? (
+        {!accountUser ? (
           <>
             <Link href="/sign-in">Sign In</Link>
             <Link href="/sign-up">Sign Up →</Link>
           </>
         ) : (
           <>
-            <Link href={DASHBOARD_HOME[user.role]}>Dashboard</Link>
+            <Link href={DASHBOARD_HOME[accountUser.role]}>Dashboard</Link>
             <Link href="/dashboard/profile">Update Profile</Link>
           </>
         )}

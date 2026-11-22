@@ -41,7 +41,7 @@ export default function CustomerOverview() {
             <StatCard label="Active Jobs" value={active} icon={<Clock3 size={18} color="#a9680a" />} />
             <StatCard label="Completed Jobs" value={completed} icon={<CheckCircle2 size={18} color="#16824a" />} />
           </div>
-          <div className="fm-grid fm-grid-2" style={{ marginTop: 22, gridTemplateColumns: "1.2fr .8fr" }}>
+          <div className="fm-grid fm-grid-2" style={{ marginTop: 22 }}>
             <div className="fm-panel">
               <div className="fm-panel-head"><h3 style={{ fontSize: 15, margin: 0 }}>Recent bookings</h3><Link href="/dashboard/customer/bookings" className="fm-muted" style={{ fontSize: 13 }}>View all →</Link></div>
               {bookings.length === 0 ? (

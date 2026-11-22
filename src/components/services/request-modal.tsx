@@ -73,8 +73,8 @@ export const RequestModal = ({ open, onClose, service, user }: RequestModalProps
       title="Request a repair"
       description={`${service.title} · ${service.technicianName}`}
     >
-      <form onSubmit={onSubmit}>
-        <div className="fm-grid fm-grid-2" style={{ gap: 0, columnGap: 14 }}>
+      <form onSubmit={onSubmit} className="fm-request-form">
+        <div className="fm-grid fm-grid-2 fm-request-row">
           <Field label="Name" value={user.name} readOnly />
           <Field label="Email" value={user.email} readOnly />
         </div>

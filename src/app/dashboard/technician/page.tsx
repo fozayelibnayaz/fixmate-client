@@ -40,7 +40,7 @@ export default function TechnicianOverview() {
             <StatCard label="Approved Services" value={services.filter((s) => s.approvalStatus === "approved").length} icon={<CheckCircle2 size={18} color="#16824a" />} />
             <StatCard label="Pending Requests" value={pending} icon={<Clock3 size={18} color="#a9680a" />} />
           </div>
-          <div className="fm-grid fm-grid-2" style={{ marginTop: 22, gridTemplateColumns: "1.2fr .8fr" }}>
+          <div className="fm-grid fm-grid-2" style={{ marginTop: 22 }}>
             <div className="fm-panel">
               <div className="fm-panel-head"><h3 style={{ fontSize: 15, margin: 0 }}>Incoming requests</h3><Link href="/dashboard/technician/requests" className="fm-muted" style={{ fontSize: 13 }}>Manage →</Link></div>
               {requests.length === 0 ? (

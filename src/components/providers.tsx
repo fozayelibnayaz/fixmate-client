@@ -15,12 +15,14 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Provider store={store}>
-      <ChakraProvider value={defaultSystem}>
-        <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem={false}>
+      {/* Keep next-themes outside Chakra so its hydration script is rendered in
+          the same position on the server and on the client. */}
+      <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem={false}>
+        <ChakraProvider value={defaultSystem}>
           {children}
           <Toaster position="top-right" richColors closeButton />
-        </ThemeProvider>
-      </ChakraProvider>
+        </ChakraProvider>
+      </ThemeProvider>
     </Provider>
   );
 };

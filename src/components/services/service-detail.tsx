@@ -3,7 +3,7 @@
 import { ArrowLeft, Clock3, MapPin, ShieldCheck, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { money } from "@/lib/format";
 import type { Service } from "@/lib/types";
@@ -13,10 +13,17 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
   const { user } = useAuth();
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
-  const canRequest = user?.role === "customer";
+  const [mounted, setMounted] = useState(false);
+
+  // The session arrives after hydration; keep the initial client render
+  // signed-out so it matches the server HTML.
+  useEffect(() => setMounted(true), []);
+
+  const accountUser = mounted ? user : null;
+  const canRequest = accountUser?.role === "customer";
 
   const handleRequest = () => {
-    if (!user) {
+    if (!accountUser) {
       router.push(`/sign-in?next=${encodeURIComponent(`/services/${service._id}`)}`);
       return;
     }
@@ -37,7 +44,7 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
         <Link href="/services" className="fm-muted" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 14, marginBottom: 30 }}>
           <ArrowLeft size={15} /> Back to services
         </Link>
-        <div style={{ display: "grid", gridTemplateColumns: "1.05fr .95fr", gap: 52, alignItems: "start" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))", gap: 52, alignItems: "start" }}>
           <div>
             <div className="fm-card" style={{ aspectRatio: "4 / 3" }}>
               <img
@@ -86,11 +93,11 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
               <button
                 className="fm-btn fm-btn-blue fm-btn-block"
                 onClick={handleRequest}
-                disabled={Boolean(user && !canRequest)}
+                disabled={Boolean(accountUser && !canRequest)}
               >
-                {!user ? "Sign in to request a repair" : canRequest ? "Request Repair" : "Customer account needed"}
+                {!accountUser ? "Sign in to request a repair" : canRequest ? "Request Repair" : "Customer account needed"}
               </button>
-              {user && !canRequest ? (
+              {accountUser && !canRequest ? (
                 <p className="fm-muted" style={{ fontSize: 12, margin: "12px 0 0", textAlign: "center" }}>
                   Create a customer account to book a repair.
                 </p>
@@ -102,8 +109,8 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
           </div>
         </div>
       </div>
-      {user && canRequest ? (
-        <RequestModal open={modalOpen} onClose={() => setModalOpen(false)} service={service} user={user} />
+      {accountUser && canRequest ? (
+        <RequestModal open={modalOpen} onClose={() => setModalOpen(false)} service={service} user={accountUser} />
       ) : null}
     </section>
   );

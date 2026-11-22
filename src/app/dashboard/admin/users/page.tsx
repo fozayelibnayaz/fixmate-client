@@ -33,9 +33,11 @@ export default function AdminUsersPage() {
             <tbody>
               {(data?.users ?? []).map((user) => (
                 <tr key={user.id}>
-                  <td style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    {user.image ? <img src={user.image} alt="" className="fm-avatar" /> : <span className="fm-avatar" style={{ display: "grid", placeItems: "center", background: "var(--fm-ink)", color: "var(--fm-paper)", fontSize: 12 }}>{user.name.charAt(0)}</span>}
-                    <strong>{user.name}</strong>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      {user.image ? <img src={user.image} alt="" className="fm-avatar" /> : <span className="fm-avatar" style={{ display: "grid", placeItems: "center", background: "var(--fm-ink)", color: "var(--fm-paper)", fontSize: 12 }}>{user.name.charAt(0)}</span>}
+                      <strong>{user.name}</strong>
+                    </div>
                   </td>
                   <td>{user.email}</td>
                   <td><span className={`fm-status ${user.role === "admin" ? "fm-status-indigo" : user.role === "technician" ? "fm-status-blue" : "fm-status-green"}`}>{user.role}</span></td>

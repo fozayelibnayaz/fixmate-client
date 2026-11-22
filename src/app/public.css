@@ -37,8 +37,13 @@
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  min-height: 100vh;
+  /* `clip` prevents a second vertical scroll container, unlike `hidden`. */
+  overflow-x: clip;
+  min-height: 100svh;
+}
+@supports not (overflow: clip) {
+  .cl-root { overflow-x: hidden; }
+  html:has(.cl-root) { overflow-x: hidden; }
 }
 
 .cl-root *, .cl-root *::before, .cl-root *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -119,12 +124,12 @@
 .cl-root .fm-service-body { padding: 18px; gap: 10px; }
 .cl-root .fm-service-foot { padding-top: 12px; }
 .cl-root .fm-empty { padding: 70px 20px; }
-.cl-root .cl-filter-panel > div { grid-template-columns: 2fr 1fr 1fr 1fr !important; }
+.cl-root .cl-filter-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
 @media (max-width: 900px) {
-  .cl-root .cl-filter-panel > div { grid-template-columns: 1fr 1fr !important; }
+  .cl-root .cl-filter-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 560px) {
-  .cl-root .cl-filter-panel > div { grid-template-columns: 1fr !important; }
+  .cl-root .cl-filter-grid { grid-template-columns: 1fr; }
   .cl-root .fm-section, .cl-root .fm-section-sm { padding: 64px 0; padding-top: 110px; }
 }
 
@@ -156,11 +161,11 @@
 .cl-btn-blue:hover { background: #0057d9; transform: translateY(-1px); box-shadow: 0 0 0 1px var(--blue-line), 0 12px 40px rgba(0, 102, 255, .35); }
 .cl-btn-lg { padding: 14px 28px; font-size: 15px; }
 .cl-hamburger { display: none; background: none; border: none; color: #fff; cursor: pointer; padding: 8px; }
-.cl-mobile-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; z-index: 99; background: rgba(0, 0, 0, .92); backdrop-filter: blur(24px); border-bottom: var(--hairline); padding: 20px 24px 32px; }
+.cl-mobile-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; z-index: 99; background: rgba(0, 0, 0, .92); backdrop-filter: blur(24px); border-bottom: var(--hairline); padding: 20px 24px 32px; max-height: calc(100dvh - 64px); overflow-y: auto; overscroll-behavior: contain; }
 .cl-mobile-menu.open { display: block; }
 .cl-mobile-menu a { display: block; color: var(--pearl); text-decoration: none; font-size: 18px; padding: 12px 0; border-bottom: 1px solid var(--ring); }
 .cl-mobile-menu a:last-child { border: none; }
-.cl-account-menu { position: absolute; right: 0; top: 50px; width: 236px; border-radius: 14px; padding: 10px; background: rgba(17, 17, 17, .96); border: 1px solid var(--ring-strong); box-shadow: 0 30px 60px rgba(0, 0, 0, .65); backdrop-filter: blur(18px); }
+.cl-account-menu { position: absolute; right: 0; top: 50px; width: min(236px, calc(100vw - 32px)); border-radius: 14px; padding: 10px; background: rgba(17, 17, 17, .96); border: 1px solid var(--ring-strong); box-shadow: 0 30px 60px rgba(0, 0, 0, .65); backdrop-filter: blur(18px); }
 .cl-account-menu button { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; font-size: 14px; background: none; border: 0; color: var(--pearl); cursor: pointer; width: 100%; text-align: left; }
 .cl-account-menu button:hover { background: var(--obsidian); color: #fff; }
 .cl-account-menu .cl-account-signout { color: #f87171; }
@@ -392,7 +397,7 @@
 .cl-lift-up { color: #4ade80; } .cl-lift-down { color: #f87171; }
 .cl-uptime-badge { font-size: 64px; font-weight: 500; letter-spacing: -.05em; font-family: var(--font-display); background: linear-gradient(180deg, #fff, #666); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .cl-locale-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 2px; border-bottom: 1px solid rgba(255, 255, 255, .05); }
-.cl-progress { width: 120px; height: 5px; border-radius: 3px; background: var(--slate); overflow: hidden; }
+.cl-progress { width: 120px; max-width: 100%; height: 5px; border-radius: 3px; background: var(--slate); overflow: hidden; }
 .cl-progress i { display: block; height: 100%; background: var(--blue); border-radius: 3px; }
 
 /* ============ SHOWCASE / STORIES / CATEGORIES ============ */
@@ -471,7 +476,7 @@
 .cl-footer a { display: block; color: var(--mist); text-decoration: none; font-size: 13px; padding: 4px 0; transition: color .2s; }
 .cl-footer a:hover { color: #fff; }
 .cl-footer-bottom { display: flex; justify-content: space-between; align-items: center; border-top: var(--hairline); margin-top: 48px; padding-top: 24px; font-size: 12px; color: var(--smoke); flex-wrap: wrap; gap: 12px; }
-.cl-foot-word { font-family: var(--font-display); font-size: clamp(80px, 18vw, 220px); font-weight: 600; letter-spacing: -.05em; line-height: .85; text-align: center; color: #111; user-select: none; margin-top: 56px; -webkit-text-stroke: 1px #2a2a2a; }
+.cl-foot-word { font-family: var(--font-display); font-size: clamp(44px, 14vw, 220px); font-weight: 600; white-space: nowrap; overflow: hidden; letter-spacing: -.05em; line-height: .85; text-align: center; color: #111; user-select: none; margin-top: 56px; -webkit-text-stroke: 1px #2a2a2a; }
 .cl-footer-socials { display: flex; gap: 10px; margin-top: 22px; }
 .cl-footer-socials a { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .2); display: grid; place-items: center; padding: 0; }
 
@@ -482,16 +487,19 @@
 .cl-reveal[data-delay="2"] { transition-delay: .2s; }
 .cl-reveal[data-delay="3"] { transition-delay: .3s; }
 
+.cl-area-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.cl-area-list span { display: inline-flex; align-items: center; padding: 6px 11px; border: 1px solid var(--ring); border-radius: 100px; font-size: 12px; color: var(--smoke); background: rgba(255, 255, 255, .03); }
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1080px) {
   .cl-steps { grid-template-columns: repeat(2, 1fr); }
-  .cl-explore-row { grid-template-columns: repeat(3, 1fr); }
+  .cl-explore-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cl-bento { grid-template-columns: repeat(4, 1fr); }
   .cl-span-3, .cl-span-4 { grid-column: span 2; }
   .cl-showcase-grid { columns: 3; }
   .cl-templates-grid { grid-template-columns: repeat(3, 1fr); }
   .cl-footer-grid { grid-template-columns: repeat(2, 1fr); }
-  .cl-app-window { grid-template-columns: 170px 1fr; min-height: 380px; }
+  .cl-app-window { grid-template-columns: 170px 1fr; min-height: 380px; transform: none; will-change: auto; }
   .cl-props { display: none; }
   .cl-agent-pop { right: 3%; width: 260px; }
   .cl-stories-layout { grid-template-columns: 1fr; }
@@ -525,6 +533,35 @@
   .cl-hero h1 { font-size: clamp(44px, 12vw, 64px); }
   .cl-hero-search { width: 92vw; }
   .cl-featured-quote { padding: 24px; min-height: 240px; }
+}
+@media (max-width: 560px) {
+  .cl-root .fm-container, .cl-root .fm-narrow { width: min(100% - 28px, var(--container)); }
+  .cl-root .fm-hero { padding: 120px 0 64px; }
+  .cl-container, .cl-nav-inner { padding-inline: 16px; }
+  .cl-section { padding-block: 56px; }
+  .cl-hero { padding-top: 96px; }
+  .cl-hero h1 { font-size: clamp(36px, 11vw, 52px); }
+  .cl-hero-sub { font-size: 16px; }
+  .cl-hero-search { width: 100%; flex-wrap: wrap; }
+  .cl-hero-search button { width: 100%; }
+  .cl-hero-ctas .cl-btn { flex: 1 1 100%; justify-content: center; }
+  .cl-app-window { width: 100%; margin-top: 40px; }
+  .cl-win-titlebar .cl-doc-name .badge,
+  .cl-win-right .cl-mini-btn { display: none; }
+  .cl-steps, .cl-explore-row, .cl-templates-grid, .cl-stories-grid,
+  .cl-showcase-grid, .cl-bento { grid-template-columns: 1fr; }
+  .cl-span-2, .cl-span-3, .cl-span-4 { grid-column: 1 / -1; }
+  .cl-explore-art { height: 180px; }
+  .cl-footer-grid { grid-template-columns: 1fr; }
+  .cl-final-cta { padding: 80px 0 72px; }
+  .cl-prompt-box { flex-wrap: wrap; }
+  .cl-prompt-box button { width: 100%; }
+}
+@media (max-width: 420px), (max-height: 420px) {
+  .cl-wheel { height: 260px; }
+  .cl-wheel-ring { width: 220px; height: 220px; }
+  .cl-wheel-item { width: 56px; height: 56px; font-size: 16px; }
+  .cl-wheel-core { width: 92px; height: 92px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cl-root *, .cl-root *::before, .cl-root *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

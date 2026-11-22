@@ -86,7 +86,7 @@ export const ServicesBrowser = ({ initial }: { initial: BrowseParams }) => {
         <p className="fm-lead">Trusted local repairs from verified technicians. Search, filter and book in a few taps.</p>
 
         <div className="fm-panel cl-filter-panel" style={{ marginTop: 38, padding: 18 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12 }}>
+          <div className="cl-filter-grid" style={{ display: "grid", gap: 12 }}>
             <div style={{ position: "relative" }}>
               <Search size={17} style={{ position: "absolute", left: 14, top: 15, color: "var(--fm-muted)" }} />
               <input

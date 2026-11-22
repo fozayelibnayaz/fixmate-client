@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { useAuth, useRequireAuth } from "@/hooks/use-auth";
+import { DASHBOARD_HOME } from "@/lib/constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { closeSidebar, toggleSidebar } from "@/store/ui";
 import type { Role } from "@/lib/types";
@@ -46,7 +47,23 @@ export const DashboardShell = ({ children }: { children: React.ReactNode }) => {
     dispatch(closeSidebar());
   }, [pathname, dispatch]);
 
-  if (!isReady || !user) return <Spinner label="Loading dashboard…" />;
+  // Navigation links are role-specific, but a signed-in user could still type
+  // another role's URL directly. Send them back to their own dashboard home.
+  const routeRole = pathname.startsWith("/dashboard/admin")
+    ? "admin"
+    : pathname.startsWith("/dashboard/technician")
+      ? "technician"
+      : pathname.startsWith("/dashboard/customer")
+        ? "customer"
+        : null;
+  const wrongRole = Boolean(routeRole && user && routeRole !== user.role);
+
+  useEffect(() => {
+    if (!isReady || !user || !wrongRole) return;
+    router.replace(DASHBOARD_HOME[user.role]);
+  }, [isReady, user, wrongRole, router]);
+
+  if (!isReady || !user || wrongRole) return <Spinner label="Loading dashboard…" />;
 
   const links = navForRole[user.role];
   const handleSignOut = async () => {
