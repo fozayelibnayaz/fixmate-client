@@ -10,6 +10,15 @@ export const metadata: Metadata = {
   description:
     "Book verified technicians for smartphone, laptop, AC and home appliance repairs. Track every job and pay only after it's fixed.",
   keywords: ["repair", "technician", "device repair", "home appliance", "Bangladesh", "FixMate"],
+  manifest: "/favicon/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon/favicon.ico",
+    apple: "/favicon/apple-touch-icon.png",
+  },
   openGraph: {
     title: "FixMate — Broken device? Fixed.",
     description: "Verified technicians. Trackable jobs. Pay after service.",
