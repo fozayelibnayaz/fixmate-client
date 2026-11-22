@@ -43,6 +43,13 @@ export interface Service {
   createdAt: string;
 }
 
+export interface ServiceReview {
+  customerName: string;
+  rating: number;
+  review: string;
+  createdAt: string;
+}
+
 export interface Booking {
   _id: string;
   serviceId: string;

@@ -13,6 +13,21 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
     void store.dispatch(loadSession());
   }, []);
 
+  // Keep role/plan in sync when a user returns to the tab after an admin or
+  // another tab changed the account. This prevents stale upgrade/payment errors.
+  useEffect(() => {
+    const refresh = () => void store.dispatch(loadSession());
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
+
   return (
     <Provider store={store}>
       {/* Keep next-themes outside Chakra so its hydration script is rendered in

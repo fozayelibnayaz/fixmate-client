@@ -1,6 +1,7 @@
 "use client";
 
 import { BadgeCheck, Crown, ExternalLink, Layers3 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/shared";
@@ -8,12 +9,17 @@ import { Button } from "@/components/ui/button";
 import { EmptyState, Spinner } from "@/components/ui/misc";
 import { useApiData } from "@/hooks/use-api-data";
 import { useAuth } from "@/hooks/use-auth";
-import { apiFetch } from "@/lib/api";
+import { ApiRequestError, apiFetch } from "@/lib/api";
+import { DASHBOARD_HOME } from "@/lib/constants";
 import { money, shortDate, truncate } from "@/lib/format";
 import type { Payment } from "@/lib/types";
+import { loadSession } from "@/store/auth";
+import { useAppDispatch } from "@/store/hooks";
 
 export default function TechnicianProPage() {
   const { user } = useAuth();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const { data, loading } = useApiData<{ payments: Payment[] }>("/api/payments/subscription");
   const [busy, setBusy] = useState(false);
   const isPro = user?.plan === "pro";
@@ -21,10 +27,38 @@ export default function TechnicianProPage() {
   const upgrade = async () => {
     setBusy(true);
     try {
+      // The server is the source of truth for role and plan. Refresh first so a
+      // stale client session cannot send a technician to a forbidden endpoint.
+      const current = await dispatch(loadSession()).unwrap();
+      if (!current) {
+        toast.error("Your session expired. Please sign in again.");
+        router.push(`/sign-in?next=${encodeURIComponent("/dashboard/technician/pro")}`);
+        return;
+      }
+      if (current.role !== "technician") {
+        toast.error("Pro is available for technician accounts only. You have been returned to your dashboard.");
+        router.replace(DASHBOARD_HOME[current.role]);
+        return;
+      }
+      if (current.plan === "pro") {
+        toast.success("You are already on the Pro plan.");
+        setBusy(false);
+        return;
+      }
+
       const result = await apiFetch<{ url: string }>("/api/payments/pro-checkout", { method: "POST" });
       window.location.href = result.url;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not start Pro checkout");
+      if (error instanceof ApiRequestError && error.status === 403) {
+        const refreshed = await dispatch(loadSession()).unwrap();
+        toast.error(
+          refreshed?.role === "technician"
+            ? "Please try again — your technician session has been refreshed."
+            : "This account is not a technician account. Sign in with your technician account to upgrade.",
+        );
+      } else {
+        toast.error(error instanceof Error ? error.message : "Could not start Pro checkout");
+      }
       setBusy(false);
     }
   };

@@ -689,3 +689,101 @@ html[data-theme="light"] .cl-area-list span { background: #fff; color: var(--mis
   .cl-reveal { opacity: 1; transform: none; }
   .cl-app-window { transform: none; }
 }
+
+/* ============================================================
+   LIGHT THEME POLISH
+   These rules come last so the bright palette wins over the dark
+   defaults above. Text clips are re-applied with background-image
+   (never the `background` shorthand) so gradient letters never
+   turn into solid rectangular blocks.
+   ============================================================ */
+html[data-theme="light"] .cl-root .fm-gradient-text,
+html[data-theme="light"] .cl-root .cl-blue-grad,
+html[data-theme="light"] .cl-root .cl-uptime-badge {
+  background-image: linear-gradient(180deg, #0066cc, #003d80);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+html[data-theme="light"] .cl-root .cl-hero h1 .grad {
+  background-image: linear-gradient(180deg, #0f172a 30%, #475569 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+html[data-theme="light"] .cl-root .fm-hero {
+  background: radial-gradient(90% 60% at 50% -10%, rgba(0, 102, 204, .12), transparent 65%), var(--fm-paper);
+  color: var(--fm-ink);
+}
+html[data-theme="light"] .cl-root .cl-nav,
+html[data-theme="light"] .cl-root .cl-nav.scrolled {
+  background: rgba(246, 248, 251, .94);
+  border-bottom-color: var(--ring);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+html[data-theme="light"] .cl-root .cl-hero-pill { background: rgba(255, 255, 255, .85); border-color: var(--ring-strong); }
+html[data-theme="light"] .cl-root .cl-hero-search input,
+html[data-theme="light"] .cl-root .cl-prompt-box input { color: var(--bone); }
+html[data-theme="light"] .cl-root .cl-hero-search input::placeholder,
+html[data-theme="light"] .cl-root .cl-prompt-box input::placeholder { color: var(--smoke); }
+
+/* Interactive product preview panels */
+html[data-theme="light"] .cl-root .cl-win-titlebar,
+html[data-theme="light"] .cl-root .cl-sidebar,
+html[data-theme="light"] .cl-root .cl-props,
+html[data-theme="light"] .cl-root .cl-code-window,
+html[data-theme="light"] .cl-root .cl-terminal,
+html[data-theme="light"] .cl-root .cl-term-form {
+  background: #ffffff;
+  color: var(--bone);
+}
+html[data-theme="light"] .cl-root .cl-avatars span { border-color: #fff; }
+html[data-theme="light"] .cl-root .cl-canvas-area {
+  background: radial-gradient(circle at 50% 40%, #ffffff 0%, #eef3f8 78%);
+}
+html[data-theme="light"] .cl-root .cl-canvas-card { background: #ffffff; color: var(--bone); }
+html[data-theme="light"] .cl-root .cl-canvas-hero p { color: rgba(255, 255, 255, .88); }
+html[data-theme="light"] .cl-root .cl-code-body,
+html[data-theme="light"] .cl-root .cl-term-body { color: #334155; }
+html[data-theme="light"] .cl-root .cl-tok-k { color: #b42318; }
+html[data-theme="light"] .cl-root .cl-tok-f { color: #6d28d9; }
+html[data-theme="light"] .cl-root .cl-tok-s { color: #0369a1; }
+html[data-theme="light"] .cl-root .cl-tok-c { color: #64748b; }
+html[data-theme="light"] .cl-root .cl-tok-n { color: #0052b4; }
+html[data-theme="light"] .cl-root .cl-t-dim { color: #64748b; }
+html[data-theme="light"] .cl-root .cl-t-blue { color: #0052b4; }
+html[data-theme="light"] .cl-root .cl-wheel-item.active { color: var(--blue-deep); }
+html[data-theme="light"] .cl-root .cl-mcp-endpoint button:hover,
+html[data-theme="light"] .cl-root .cl-agent-chip:hover,
+html[data-theme="light"] .cl-root .cl-footer a:hover { color: var(--blue-deep); }
+
+/* Cards that used dark artwork as their only surface */
+html[data-theme="light"] .cl-root .cl-story,
+html[data-theme="light"] .cl-root .cl-story.active {
+  background: var(--panel);
+  color: var(--bone);
+}
+html[data-theme="light"] .cl-root .cl-tpl { color: var(--bone); }
+html[data-theme="light"] .cl-root .cl-tpl-art span { color: #fff; }
+html[data-theme="light"] .cl-root .cl-sc-1 { background: linear-gradient(160deg, #f1e6db, #c9a98c); }
+html[data-theme="light"] .cl-root .cl-sc-2 { background: linear-gradient(160deg, #dbeafe, #8fb8df); }
+html[data-theme="light"] .cl-root .cl-sc-3 { background: linear-gradient(160deg, #ede9fe, #b9a7e3); }
+html[data-theme="light"] .cl-root .cl-sc-4 { background: linear-gradient(160deg, #dcfce7, #94c9a8); }
+html[data-theme="light"] .cl-root .cl-sc-5 { background: linear-gradient(160deg, #fee2e2, #e3a3a3); }
+html[data-theme="light"] .cl-root .cl-sc-6 { background: linear-gradient(160deg, #dbeafe, #9db9dc); }
+html[data-theme="light"] .cl-root .cl-sc-7 { background: linear-gradient(160deg, #e2e8f0, #aebac8); }
+html[data-theme="light"] .cl-root .cl-sc-8 { background: linear-gradient(160deg, #ccfbf1, #8fc9bc); }
+html[data-theme="light"] .cl-root .cl-shot small { color: rgba(15, 23, 42, .68); }
+html[data-theme="light"] .cl-root .cl-shot b { color: #0f172a; }
+
+html[data-theme="light"] .cl-root .cl-footer {
+  background: #e9eef5;
+  color: var(--bone);
+  border-top-color: var(--ring-strong);
+}
+html[data-theme="light"] .cl-root .cl-footer-socials a { border-color: var(--ring-strong); }
+html[data-theme="light"] .cl-root .cl-footer-bottom { color: var(--mist); }

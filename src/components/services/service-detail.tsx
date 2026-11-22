@@ -8,7 +8,7 @@ import { useApiData } from "@/hooks/use-api-data";
 import { useAuth } from "@/hooks/use-auth";
 import { ACTIVE_BOOKING_STATUSES } from "@/lib/constants";
 import { money } from "@/lib/format";
-import type { Booking, Service } from "@/lib/types";
+import type { Booking, Service, ServiceReview } from "@/lib/types";
 import { RequestModal } from "./request-modal";
 
 export const ServiceDetail = ({ service }: { service: Service }) => {
@@ -19,6 +19,9 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
   const accountUser = mounted ? user : null;
   const { data: bookingData } = useApiData<{ bookings: Booking[] }>(
     accountUser?.role === "customer" ? "/api/bookings/my" : null,
+  );
+  const { data: reviewData, loading: reviewsLoading } = useApiData<{ reviews: ServiceReview[] }>(
+    service.reviewCount > 0 ? `/api/services/${service._id}/reviews` : null,
   );
 
   // A duplicate active request is blocked on the server; surface it here so the
@@ -142,6 +145,39 @@ export const ServiceDetail = ({ service }: { service: Service }) => {
             </div>
           </div>
         </div>
+
+        {service.reviewCount > 0 ? (
+          <section style={{ marginTop: 64 }} aria-labelledby="customer-reviews">
+            <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
+              <h2 id="customer-reviews" className="fm-h3">Customer reviews</h2>
+              <span className="fm-rating">
+                <Star size={14} fill="currentColor" aria-hidden="true" />
+                {service.averageRating.toFixed(1)} · {service.reviewCount} review{service.reviewCount === 1 ? "" : "s"}
+              </span>
+            </div>
+            {reviewsLoading ? (
+              <p className="fm-muted" style={{ marginTop: 18, fontSize: 14 }}>Loading customer reviews…</p>
+            ) : (reviewData?.reviews ?? []).length === 0 ? (
+              <p className="fm-muted" style={{ marginTop: 18, fontSize: 14 }}>
+                Reviews for this service will appear here once they are published.
+              </p>
+            ) : (
+              <div className="fm-grid fm-grid-3" style={{ marginTop: 22 }}>
+                {(reviewData?.reviews ?? []).map((review, index) => (
+                  <article key={`${review.customerName}-${index}`} className="fm-panel" style={{ padding: 22 }}>
+                    <div className="fm-rating" style={{ display: "flex", gap: 3 }} aria-label={`${review.rating} out of 5 stars`}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} size={14} fill={star <= review.rating ? "currentColor" : "none"} aria-hidden="true" />
+                      ))}
+                    </div>
+                    <p style={{ margin: "14px 0", lineHeight: 1.65, fontSize: 14 }}>“{review.review}”</p>
+                    <div className="fm-muted" style={{ fontSize: 12 }}>{review.customerName} · Verified customer</div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : null}
       </div>
       {accountUser && canRequest ? (
         <RequestModal open={modalOpen} onClose={() => setModalOpen(false)} service={service} user={accountUser} />

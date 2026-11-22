@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { ServiceDetail } from "@/components/services/service-detail";
+import { ServiceDetailLoader } from "@/components/services/service-detail-loader";
 import { apiFetch } from "@/lib/api";
 import type { Service } from "@/lib/types";
 
@@ -13,10 +12,12 @@ export const metadata: Metadata = {
 
 export default async function ServiceDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  let service: Service | undefined;
   try {
-    const { service } = await apiFetch<{ service: Service }>(`/api/services/${id}`);
-    return <ServiceDetail service={service} />;
+    ({ service } = await apiFetch<{ service: Service }>(`/api/services/${id}`));
   } catch {
-    notFound();
+    // The client loader will retry in the browser and render a friendly
+    // not-found state instead of failing the entire page request.
   }
+  return <ServiceDetailLoader id={id} initialService={service} />;
 }
