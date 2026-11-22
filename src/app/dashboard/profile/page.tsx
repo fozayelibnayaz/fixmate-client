@@ -1,79 +1,91 @@
 "use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ImagePlus, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
-import { api } from "@/lib/utils";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/dashboard/shared";
+import { Button } from "@/components/ui/button";
+import { Field, TextareaField } from "@/components/ui/field";
+import { useAuth } from "@/hooks/use-auth";
+import { profileSchema, type ProfileValues } from "@/lib/schemas";
+import { uploadImage } from "@/lib/upload";
+import { useAppDispatch } from "@/store/hooks";
+import { saveProfile } from "@/store/auth";
 
 export default function ProfilePage() {
-  const [session, setSession] = useState<any>(null);
-  const [form, setForm] = useState({ name: "", phone: "", area: "", bio: "" });
-  const [image, setImage] = useState("");
-  const [saving, setSaving] = useState(false);
+  const { user } = useAuth();
+  const dispatch = useAppDispatch();
+  const [uploading, setUploading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ProfileValues>({ resolver: zodResolver(profileSchema) });
+  const image = watch("image");
 
   useEffect(() => {
-    authClient.getSession().then((s: any) => {
-      const u = s?.data?.user;
-      setSession(s?.data);
-      setForm({ name: u?.name || "", phone: u?.phone || "", area: u?.area || "", bio: u?.bio || "" });
-      setImage(u?.image || "");
-    });
-  }, []);
+    if (user) {
+      reset({ name: user.name, phone: user.phone, area: user.area, bio: user.bio, image: user.image });
+    }
+  }, [user, reset]);
 
-  async function uploadImage(file: File) {
-    const fd = new FormData();
-    fd.append("image", file);
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`, { method: "POST", body: fd });
-    const json = await res.json();
-    if (json.success) { setImage(json.data.url); toast.success("Image uploaded"); }
-  }
-
-  async function save(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
+  const handleFile = async (file?: File) => {
+    if (!file) return;
+    setUploading(true);
     try {
-      await api("/api/users/profile", { method: "PATCH", body: JSON.stringify({ ...form, image }) });
-      toast.success("Profile updated");
-      // refresh session
-      await authClient.getSession();
-    } catch (err: any) { toast.error(err.message); }
-    finally { setSaving(false); }
-  }
+      const url = await uploadImage(file);
+      setValue("image", url, { shouldValidate: true });
+      toast.success("Photo uploaded");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
 
-  const user = session?.user;
+  const submit = handleSubmit(async (values) => {
+    try {
+      await dispatch(saveProfile(values)).unwrap();
+      toast.success("Profile updated");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save your profile");
+    }
+  });
+
   return (
-    <div>
-      <h1 className="page-heading" style={{marginBottom:28}}>Update Profile</h1>
-      <form onSubmit={save} className="panel space-y-4 max-w-2xl">
-        <div className="flex items-center gap-4">
-          <img src={image || `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name||"U")}&background=181c19&color=00e0c6`} className="w-20 h-20 rounded-xl" alt="" />
-          <input type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); }} />
-        </div>
-        <div>
-          <label className="text-xs text-[var(--muted)]">Name</label>
-          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="field" />
-        </div>
-        <div>
-          <label className="text-xs text-[var(--muted)]">Email (read-only)</label>
-          <input value={user?.email || ""} readOnly className="field" />
-        </div>
-        <div>
-          <label className="text-xs text-[var(--muted)]">Role (read-only)</label>
-          <input value={user?.role || ""} readOnly className="field" />
-        </div>
-        <div>
-          <label className="text-xs text-[var(--muted)]">Phone</label>
-          <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="field" />
-        </div>
-        <div>
-          <label className="text-xs text-[var(--muted)]">Area</label>
-          <input value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} className="field" />
-        </div>
-        <div>
-          <label className="text-xs text-[var(--muted)]">Bio</label>
-          <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="field" rows={3} />
-        </div>
-        <button type="submit" disabled={saving} className="btn btn-primary"><span>{saving ? "Saving..." : "Save"}</span></button>
-      </form>
-    </div>
+    <>
+      <PageHeader eyebrow="All roles" title="Update Profile" subtitle="Your name and photo update everywhere instantly." />
+      <div className="fm-panel" style={{ padding: 28, maxWidth: 720 }}>
+        <form onSubmit={submit}>
+          <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 26 }}>
+            {image ? <img src={image} alt="Profile preview" className="fm-avatar" style={{ width: 64, height: 64 }} /> : (
+              <span className="fm-avatar" style={{ width: 64, height: 64, display: "grid", placeItems: "center", background: "var(--fm-ink)", color: "var(--fm-paper)", fontSize: 22 }}>
+                {user?.name.charAt(0)}
+              </span>
+            )}
+            <label className="fm-btn fm-btn-ghost fm-btn-sm" style={{ cursor: "pointer" }}>
+              {uploading ? <Loader2 size={15} /> : <ImagePlus size={15} />} Change photo
+              <input type="file" accept="image/*" hidden onChange={(event) => handleFile(event.target.files?.[0])} />
+            </label>
+          </div>
+          <div className="fm-grid fm-grid-2" style={{ gap: 0, columnGap: 16 }}>
+            <Field label="Full name" error={errors.name?.message} {...register("name")} />
+            <Field label="Email" value={user?.email ?? ""} readOnly />
+          </div>
+          <div className="fm-grid fm-grid-2" style={{ gap: 0, columnGap: 16 }}>
+            <Field label="Phone" placeholder="+8801…" {...register("phone")} />
+            <Field label="Area" placeholder="Mirpur, Dhaka" {...register("area")} />
+          </div>
+          <Field label="Role" value={user?.role ?? ""} readOnly />
+          <TextareaField label="Bio" placeholder="Tell customers about your experience…" {...register("bio")} />
+          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving…" : "Save profile"}</Button>
+        </form>
+      </div>
+    </>
   );
 }

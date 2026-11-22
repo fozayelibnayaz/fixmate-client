@@ -1,53 +1,77 @@
 "use client";
-import { useEffect, useState } from "react";
-import { api } from "@/lib/utils";
+
+import { useState } from "react";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/dashboard/shared";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/misc";
+import { ApprovalBadge } from "@/components/ui/status-badge";
+import { useApiData } from "@/hooks/use-api-data";
+import { patch } from "@/lib/api";
+import { money } from "@/lib/format";
+import type { Service } from "@/lib/types";
 
-export default function AdminServices() {
-  const [services, setServices] = useState<any[]>([]);
+const filters = ["", "pending", "approved", "rejected"];
+
+export default function AdminServicesPage() {
   const [filter, setFilter] = useState("pending");
-  const load = () => {
-    const qs = filter !== "all" ? `?status=${filter}` : "";
-    api(`/api/admin/services${qs}`).then((r) => setServices(r.data || [])).catch(() => {});
-  };
-  useEffect(() => { load(); }, [filter]);
+  const { data, loading, refresh } = useApiData<{ services: Service[] }>(
+    `/api/admin/services${filter ? `?status=${filter}` : ""}`,
+  );
 
-  async function approve(id: string, status: string) {
+  const decide = async (service: Service, approvalStatus: string) => {
     try {
-      await api(`/api/admin/services/${id}/approval`, { method: "PATCH", body: JSON.stringify({ approvalStatus: status }) });
-      toast.success(`Service ${status}`);
-      load();
-    } catch (e: any) { toast.error(e.message); }
-  }
+      await patch(`/api/admin/services/${service._id}/approval`, { approvalStatus });
+      toast.success(approvalStatus === "approved" ? "Service approved" : "Service rejected");
+      refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update service");
+    }
+  };
 
   return (
-    <div>
-      <h1 className="page-heading" style={{marginBottom:28}}>Service Approval</h1>
-      <div className="flex gap-2 mb-4">
-        {["pending", "approved", "rejected", "all"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`btn text-xs ${filter === s ? "btn-primary" : "btn-ghost"}`}>{s}</button>
+    <>
+      <PageHeader eyebrow="Admin dashboard" title="Service Approval" subtitle="Only approved services appear on public pages." />
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
+        {filters.map((value) => (
+          <button
+            key={value || "all"}
+            onClick={() => setFilter(value)}
+            className={`fm-pill ${filter === value ? "active" : ""}`}
+            style={filter === value ? { background: "var(--fm-ink)", color: "var(--fm-paper)", borderColor: "var(--fm-ink)", cursor: "pointer" } : { cursor: "pointer" }}
+          >
+            {value ? value.charAt(0).toUpperCase() + value.slice(1) : "All"}
+          </button>
         ))}
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead><tr className="text-left text-[var(--muted)] font-mono text-xs uppercase"><th className="py-2">Image</th><th>Title</th><th>Tech</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            {services.map((s) => (
-              <tr key={s._id} className="border-t border-[var(--line)]">
-                <td className="py-2"><img src={s.image} alt="" className="w-12 h-12 object-cover rounded-lg" /></td>
-                <td className="py-2 font-medium">{s.title}</td>
-                <td className="py-2">{s.technicianName}</td>
-                <td className="py-2">{s.category}</td>
-                <td className="py-2">{s.approvalStatus}</td>
-                <td className="py-2 flex gap-2">
-                  <button onClick={() => approve(s._id, "approved")} className="btn btn-primary text-xs">Approve</button>
-                  <button onClick={() => approve(s._id, "rejected")} className="btn btn-ghost text-xs text-red-400">Reject</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      {loading ? <Spinner /> : (data?.services.length ?? 0) === 0 ? (
+        <div className="fm-panel"><div className="fm-empty"><div className="fm-empty-icon">✅</div><h3 className="fm-h3">Nothing to review</h3><p className="fm-muted">No services match this filter.</p></div></div>
+      ) : (
+        <div className="fm-panel">
+          <table className="fm-table">
+            <thead><tr><th>Service</th><th>Technician</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              {(data?.services ?? []).map((service) => (
+                <tr key={service._id}>
+                  <td style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <img src={service.image} alt="" style={{ width: 46, height: 46, borderRadius: 9, objectFit: "cover" }} />
+                    <div><strong>{service.title}</strong><div className="fm-muted" style={{ fontSize: 12 }}>{service.category}</div></div>
+                  </td>
+                  <td>{service.technicianName}</td>
+                  <td>{money(service.basePrice)}</td>
+                  <td><ApprovalBadge status={service.approvalStatus} /></td>
+                  <td>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <Button variant="blue" size="sm" onClick={() => decide(service, "approved")}>Approve</Button>
+                      <Button variant="ghost" size="sm" onClick={() => decide(service, "rejected")}>Reject</Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
   );
 }

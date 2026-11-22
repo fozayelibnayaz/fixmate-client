@@ -1,141 +1,102 @@
 "use client";
-import { useEffect, useState } from "react";
-import { api } from "@/lib/utils";
+
+import { ExternalLink, XCircle } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { STATUS_COLORS } from "@/lib/utils";
+import { StatusStepper } from "@/components/dashboard/status-stepper";
+import { PageHeader } from "@/components/dashboard/shared";
+import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/modal";
+import { EmptyState, Spinner } from "@/components/ui/misc";
+import { PaymentBadge, StatusBadge } from "@/components/ui/status-badge";
+import { useApiData } from "@/hooks/use-api-data";
+import { apiFetch, patch } from "@/lib/api";
+import { money, shortDate } from "@/lib/format";
+import type { Booking } from "@/lib/types";
 
-export default function CustomerBookings() {
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [cancelId, setCancelId] = useState<string | null>(null);
-  const [reviewBooking, setReviewBooking] = useState<any>(null);
-  const [rating, setRating] = useState(5);
-  const [reviewText, setReviewText] = useState("");
+export default function CustomerBookingsPage() {
+  const { data, loading, refresh } = useApiData<{ bookings: Booking[] }>("/api/bookings/my");
+  const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const load = () => api("/api/bookings/my").then((r) => setBookings(r.data || [])).catch(() => {});
-  useEffect(() => { load(); }, []);
-
-  async function cancel(id: string) {
+  const cancel = async () => {
+    if (!cancelTarget) return;
+    setBusy(true);
     try {
-      await api(`/api/bookings/${id}/cancel`, { method: "PATCH" });
+      await patch(`/api/bookings/${cancelTarget._id}/cancel`);
       toast.success("Booking cancelled");
-      setCancelId(null);
-      load();
-    } catch (e: any) { toast.error(e.message); }
-  }
+      setCancelTarget(null);
+      refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not cancel booking");
+    } finally {
+      setBusy(false);
+    }
+  };
 
-  async function pay(b: any) {
+  const pay = async (booking: Booking) => {
     try {
-      const r = await api("/api/payments/create-checkout-session", { method: "POST", body: JSON.stringify({ bookingId: b._id }) });
-      window.location.href = r.url;
-    } catch (e: any) { toast.error(e.message); }
-  }
+      const result = await apiFetch<{ url: string }>("/api/payments/create-checkout-session", {
+        method: "POST",
+        body: JSON.stringify({ bookingId: booking._id }),
+      });
+      window.location.href = result.url;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not start payment");
+    }
+  };
+
+  const bookings = data?.bookings ?? [];
 
   return (
-    <div>
-      <h1 className="page-heading" style={{marginBottom:28}}>My Bookings</h1>
-      {bookings.length === 0 ? (
-        <Empty text="No bookings yet." />
+    <>
+      <PageHeader eyebrow="Customer dashboard" title="My Bookings" subtitle="Track every repair from request to payment." />
+      {loading ? <Spinner label="Loading your bookings…" /> : bookings.length === 0 ? (
+        <div className="fm-panel"><EmptyState icon="🧾" title="No bookings yet" description="Once you request a repair it will appear here with a live status tracker." action={{ label: "Browse services", href: "/services" }} /></div>
       ) : (
-        <div className="space-y-4">
-          {bookings.map((b) => (
-            <div key={b._id} className="panel">
-              <div className="flex flex-col md:flex-row gap-4">
-                <img src={b.serviceImage} alt="" className="w-full md:w-24 h-24 object-cover rounded-lg" />
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <h3 className="font-semibold">{b.serviceTitle}</h3>
-                    <span className={`text-xs px-2 py-0.5 rounded ${STATUS_COLORS[b.status] || ""}`}>{b.status}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded ${STATUS_COLORS[b.paymentStatus] || ""}`}>{b.paymentStatus}</span>
+        <div className="fm-panel">
+          {bookings.map((booking) => (
+            <article key={booking._id} style={{ padding: 22, borderBottom: "1px solid var(--fm-line)" }}>
+              <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
+                <img src={booking.serviceImage} alt="" style={{ width: 92, height: 92, borderRadius: 12, objectFit: "cover" }} />
+                <div style={{ flex: 1, minWidth: 220 }}>
+                  <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                    <h3 style={{ fontSize: 17, margin: 0 }}>{booking.serviceTitle}</h3>
+                    <StatusBadge status={booking.status} />
+                    <PaymentBadge paid={booking.paymentStatus === "paid"} />
                   </div>
-                  <p className="text-sm text-[var(--muted)]">Tech: {b.technicianName} · {new Date(b.preferredDate).toLocaleDateString()}</p>
-                  <p className="text-sm text-[var(--muted)]">Amount: ${b.finalAmount || b.basePrice}</p>
-                  <StatusTimeline status={b.status} paymentStatus={b.paymentStatus} />
+                  <div className="fm-muted" style={{ fontSize: 13, marginTop: 8 }}>
+                    {booking.technicianName} · Preferred {shortDate(booking.preferredDate)} · {money(booking.finalAmount)}
+                  </div>
+                  <p className="fm-muted" style={{ fontSize: 13, margin: "10px 0 0", lineHeight: 1.6 }}>{booking.problemDescription}</p>
+                  <StatusStepper booking={booking} />
                 </div>
-                <div className="flex flex-col gap-2 md:items-end">
-                  {b.status === "requested" && (
-                    <button onClick={() => setCancelId(b._id)} className="btn btn-ghost text-sm">Cancel</button>
-                  )}
-                  {b.status === "completed" && b.paymentStatus === "unpaid" && (
-                    <button onClick={() => pay(b)} className="btn btn-primary text-sm">Pay Now</button>
-                  )}
-                  {b.paymentStatus === "paid" && (
-                    <>
-                      <button onClick={() => window.open(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/payments/invoice/${b._id}`, "_blank")} className="btn btn-ghost text-sm">Download Invoice</button>
-                      <button onClick={() => { setReviewBooking(b); setRating(5); setReviewText(""); }} className="btn btn-ghost text-sm">Review</button>
-                    </>
-                  )}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 130 }}>
+                  {booking.status === "requested" ? (
+                    <Button variant="ghost" size="sm" onClick={() => setCancelTarget(booking)}><XCircle size={14} /> Cancel</Button>
+                  ) : null}
+                  {booking.status === "completed" && booking.paymentStatus === "unpaid" ? (
+                    <Button variant="blue" size="sm" onClick={() => pay(booking)}><ExternalLink size={14} /> Pay Now</Button>
+                  ) : null}
+                  {booking.paymentStatus === "paid" ? <span className="fm-status fm-status-green">Paid ✓</span> : null}
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       )}
 
-      {cancelId && (
-        <Modal title="Cancel booking?" onClose={() => setCancelId(null)}>
-          <p className="text-sm text-[var(--muted)] mb-4">This cannot be undone.</p>
-          <div className="flex gap-2 justify-end">
-            <button onClick={() => setCancelId(null)} className="btn btn-ghost">No</button>
-            <button onClick={() => cancel(cancelId)} className="btn btn-primary">Yes, cancel</button>
-          </div>
-        </Modal>
-      )}
-
-      {reviewBooking && (
-        <Modal title="Leave a review" onClose={() => setReviewBooking(null)}>
-          <div className="space-y-3">
-            <div className="flex gap-1">
-              {[1,2,3,4,5].map((n) => (
-                <button key={n} onClick={() => setRating(n)} className={`text-2xl ${n <= rating ? "text-[var(--accent)]" : "text-[var(--muted)]"}`}>★</button>
-              ))}
-            </div>
-            <textarea value={reviewText} onChange={(e) => setReviewText(e.target.value)} placeholder="Short review..." className="field" rows={3} />
-            <div className="flex gap-2 justify-end">
-              <button onClick={() => setReviewBooking(null)} className="btn btn-ghost">Cancel</button>
-              <button onClick={async () => {
-                try {
-                  await api(`/api/bookings/${reviewBooking._id}/review`, { method: "PATCH", body: JSON.stringify({ rating, review: reviewText }) });
-                  toast.success("Review submitted");
-                  setReviewBooking(null);
-                } catch (e: any) { toast.error(e.message); }
-              }} className="btn btn-primary">Submit</button>
-            </div>
-          </div>
-        </Modal>
-      )}
-    </div>
-  );
-}
-
-function StatusTimeline({ status, paymentStatus }: { status: string; paymentStatus: string }) {
-  const steps = ["requested", "accepted", "in-progress", "completed", "paid"];
-  const current = paymentStatus === "paid" ? "paid" : status;
-  let idx = steps.indexOf(current);
-  if (idx < 0) idx = 0;
-  return (
-    <div className="flex items-center gap-1 mt-3">
-      {steps.map((s, i) => (
-        <div key={s} className="flex items-center">
-          <div className={`w-2.5 h-2.5 rounded-full ${i <= idx ? "bg-[var(--accent)]" : "bg-[var(--line2)]"}`} />
-          {i < steps.length - 1 && <div className={`w-6 h-0.5 ${i < idx ? "bg-[var(--accent)]" : "bg-[var(--line2)]"}`} />}
+      <Modal
+        open={Boolean(cancelTarget)}
+        onClose={() => setCancelTarget(null)}
+        title="Cancel this request?"
+        description={cancelTarget ? `${cancelTarget.serviceTitle} with ${cancelTarget.technicianName}. This cannot be undone.` : undefined}
+      >
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+          <Button variant="ghost" onClick={() => setCancelTarget(null)}>Keep request</Button>
+          <Button variant="danger" onClick={cancel} disabled={busy}>{busy ? "Cancelling…" : "Yes, cancel"}</Button>
         </div>
-      ))}
-      <span className="text-xs text-[var(--muted)] ml-2 capitalize">{current}</span>
-    </div>
+      </Modal>
+    </>
   );
-}
-
-function Modal({ title, onClose, children }: any) {
-  return (
-    <div className="fixed inset-0 bg-black/60 z-50 grid place-items-center p-4" onClick={onClose}>
-      <div className="panel w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-lg font-bold mb-3">{title}</h3>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function Empty({ text }: { text: string }) {
-  return <div className="text-center py-20"><div className="text-5xl mb-4">📭</div><p className="text-[var(--muted)]">{text}</p></div>;
-}
+};

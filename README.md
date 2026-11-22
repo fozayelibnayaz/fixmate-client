@@ -1,46 +1,44 @@
 # FixMate Client
 
-On-demand device & home appliance repair service platform (Next.js frontend).
+Next.js 16 App Router frontend for FixMate, a role-based on-demand device and home-appliance repair booking platform. Public pages use a dark FixMate-only design system; dashboard routes are available for customers, technicians and admins.
 
-## Live URL
-https://fixmate-client.vercel.app
+## Requirements
 
-## Admin Credentials
-- Email: admin@fixmate.test
-- Password: Admin@12345
-
-## Technician Credentials
-- Email: arif@fixmate.test / nabil@fixmate.test
-- Password: Tech@12345
-
-## Customer Credentials
-- Email: sara@fixmate.test
-- Password: Cust@12345
-
-## Key Features
-- Role-based auth (Customer, Technician, Admin) via BetterAuth + JWT
-- Browse/search/filter/sort services (server-side)
-- Repair request flow with status pipeline
-- Stripe pay-after-service
-- Dashboards for all roles
-- Dark mode toggle, job timeline tracker, server-side pagination, rating & review, PDF invoice, Pro plan
-
-## Tech Stack
-Next.js 16 (App Router), TypeScript, Tailwind v4, BetterAuth, Stripe, ImgBB, Framer Motion, GSAP.
+- Node.js >= 24.13.1
+- npm >= 11.10.1
+- A running FixMate API (default `http://localhost:4000`)
 
 ## Setup
+
 ```bash
-cp .env.example .env.local
-# fill values
 npm install
+cp .env.local.example .env.local
 npm run dev
 ```
 
-## Packages
-next, react, react-dom, better-auth, framer-motion, gsap, sonner, react-hook-form, zod, @hookform/resolvers, lucide-react, @stripe/stripe-js, date-fns, clsx, tailwind-merge, class-variance-authority, next-themes, @react-pdf/renderer, shadcn/ui (radix).
+The dev server listens on `http://localhost:3000`.
+
+## Environment
+
+| Variable | Purpose | Default |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | Express API base URL | `http://localhost:4000` |
+| `NEXT_PUBLIC_SITE_URL` | Public client origin | `http://localhost:3000` |
+
+ImgBB is not configured in the client. Image uploads are proxied through the server.
 
 ## Scripts
-- dev: next dev
-- build: next build
-- lint: eslint
-- test (e2e): npx playwright test
+
+- `npm run dev` — development server on port 3000
+- `npm run build` — production build
+- `npm start` — serve the production build
+- `npm run lint` — ESLint
+- `npm run type-check` — TypeScript verification
+- `npm run test:unit` — Vitest unit tests
+
+## Routes
+
+- Public: `/`, `/services`, `/services/[id]`, `/about`, `/sign-in`, `/sign-up`, `/payment/success`, `/payment/cancel`
+- Dashboards: `/dashboard/customer`, `/dashboard/technician`, `/dashboard/admin`, `/dashboard/profile`
+
+Demo accounts are created by the FixMate server seed script.

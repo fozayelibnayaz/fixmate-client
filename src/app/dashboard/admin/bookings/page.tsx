@@ -1,41 +1,56 @@
 "use client";
-import { useEffect, useState } from "react";
-import { api } from "@/lib/utils";
 
-export default function AdminBookings() {
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [filter, setFilter] = useState("all");
-  const load = () => {
-    const qs = filter !== "all" ? `?status=${filter}` : "";
-    api(`/api/admin/bookings${qs}`).then((r) => setBookings(r.data || [])).catch(() => {});
-  };
-  useEffect(() => { load(); }, [filter]);
+import { useState } from "react";
+import { PageHeader } from "@/components/dashboard/shared";
+import { Spinner } from "@/components/ui/misc";
+import { PaymentBadge, StatusBadge } from "@/components/ui/status-badge";
+import { useApiData } from "@/hooks/use-api-data";
+import { money, shortDate } from "@/lib/format";
+import type { Booking } from "@/lib/types";
+
+const filters = ["", "requested", "accepted", "in-progress", "completed", "rejected", "cancelled"];
+
+export default function AdminBookingsPage() {
+  const [filter, setFilter] = useState("");
+  const { data, loading } = useApiData<{ bookings: Booking[] }>(
+    `/api/admin/bookings${filter ? `?status=${filter}` : ""}`,
+  );
+
   return (
-    <div>
-      <h1 className="page-heading" style={{marginBottom:28}}>All Bookings</h1>
-      <div className="flex gap-2 mb-4 flex-wrap">
-        {["all", "requested", "accepted", "in-progress", "completed", "cancelled", "rejected"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`btn text-xs ${filter === s ? "btn-primary" : "btn-ghost"}`}>{s}</button>
+    <>
+      <PageHeader eyebrow="Admin dashboard" title="All Bookings" subtitle="Read-only view of every repair job on the platform." />
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
+        {filters.map((value) => (
+          <button
+            key={value || "all"}
+            onClick={() => setFilter(value)}
+            className="fm-pill"
+            style={filter === value ? { background: "var(--fm-ink)", color: "var(--fm-paper)", borderColor: "var(--fm-ink)", cursor: "pointer" } : { cursor: "pointer" }}
+          >
+            {value ? value.charAt(0).toUpperCase() + value.slice(1) : "All"}
+          </button>
         ))}
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead><tr className="text-left text-[var(--muted)] font-mono text-xs uppercase"><th className="py-2">Service</th><th>Customer</th><th>Technician</th><th>Date</th><th>Status</th><th>Payment</th><th>Amount</th></tr></thead>
-          <tbody>
-            {bookings.map((b) => (
-              <tr key={b._id} className="border-t border-[var(--line)]">
-                <td className="py-2">{b.serviceTitle}</td>
-                <td className="py-2">{b.customerName}</td>
-                <td className="py-2">{b.technicianName}</td>
-                <td className="py-2">{new Date(b.preferredDate).toLocaleDateString()}</td>
-                <td className="py-2">{b.status}</td>
-                <td className="py-2">{b.paymentStatus}</td>
-                <td className="py-2">${b.finalAmount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      {loading ? <Spinner /> : (
+        <div className="fm-panel">
+          <table className="fm-table">
+            <thead><tr><th>Service</th><th>Customer</th><th>Technician</th><th>Date</th><th>Amount</th><th>Status</th><th>Payment</th></tr></thead>
+            <tbody>
+              {(data?.bookings ?? []).map((booking) => (
+                <tr key={booking._id}>
+                  <td style={{ fontWeight: 650 }}>{booking.serviceTitle}</td>
+                  <td>{booking.customerName}</td>
+                  <td>{booking.technicianName}</td>
+                  <td>{shortDate(booking.preferredDate)}</td>
+                  <td>{money(booking.finalAmount)}</td>
+                  <td><StatusBadge status={booking.status} /></td>
+                  <td><PaymentBadge paid={booking.paymentStatus === "paid"} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,37 +1,39 @@
 "use client";
-import { useEffect, useState } from "react";
-import { api } from "@/lib/utils";
 
-export default function AdminTransactions() {
-  const [payments, setPayments] = useState<any[]>([]);
-  const [total, setTotal] = useState(0);
-  useEffect(() => {
-    api("/api/admin/payments").then((r) => { setPayments(r.data || []); setTotal(r.totalRevenue || 0); }).catch(() => {});
-  }, []);
+import { PageHeader } from "@/components/dashboard/shared";
+import { Spinner } from "@/components/ui/misc";
+import { useApiData } from "@/hooks/use-api-data";
+import { money, shortDate, truncate } from "@/lib/format";
+import type { Payment } from "@/lib/types";
+
+export default function AdminTransactionsPage() {
+  const { data, loading } = useApiData<{ payments: Payment[]; revenue: number }>("/api/admin/payments");
+
   return (
-    <div>
-      <h1 className="page-heading" style={{marginBottom:28}}>Transactions</h1>
-      <div className="panel mb-6">
-        <p className="text-xs font-mono text-[var(--muted)] uppercase">Total Revenue</p>
-        <p className="text-3xl font-bold mt-2 text-[var(--accent)]">${total}</p>
+    <>
+      <PageHeader eyebrow="Admin dashboard" title="Transactions" subtitle="Every payment recorded by Stripe." />
+      <div style={{ marginBottom: 22, maxWidth: 300 }}>
+        <div className="fm-stat"><div className="fm-stat-label">Total revenue</div><div className="fm-stat-value">{money(data?.revenue ?? 0)}</div></div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead><tr className="text-left text-[var(--muted)] font-mono text-xs uppercase"><th className="py-2">Customer</th><th>Technician</th><th>Service</th><th>Amount</th><th>Transaction ID</th><th>Date</th></tr></thead>
-          <tbody>
-            {payments.map((p) => (
-              <tr key={p._id} className="border-t border-[var(--line)]">
-                <td className="py-2">{p.customerName}</td>
-                <td className="py-2">{p.technicianName}</td>
-                <td className="py-2">{p.serviceTitle}</td>
-                <td className="py-2">${p.amount}</td>
-                <td className="py-2 text-xs font-mono">{p.transactionId}</td>
-                <td className="py-2">{new Date(p.paidAt).toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      {loading ? <Spinner /> : (
+        <div className="fm-panel">
+          <table className="fm-table">
+            <thead><tr><th>Service</th><th>Customer</th><th>Technician</th><th>Amount</th><th>Transaction</th><th>Date</th></tr></thead>
+            <tbody>
+              {(data?.payments ?? []).map((payment) => (
+                <tr key={payment._id}>
+                  <td style={{ fontWeight: 650 }}>{payment.serviceTitle}</td>
+                  <td>{payment.customerName}</td>
+                  <td>{payment.technicianName}</td>
+                  <td>{money(payment.amount)}</td>
+                  <td className="fm-muted" title={payment.transactionId}>{truncate(payment.transactionId, 18)}</td>
+                  <td>{shortDate(payment.paidAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
   );
 }
